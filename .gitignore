@@ -1,0 +1,45 @@
+# ── Environment Variables ─────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── Node / React ──────────────────────────────────────────────────────
+node_modules/
+client/dist/
+client/build/
+.npm
+
+# ── Uploaded files (server) ───────────────────────────────────────────
+server/uploads/
+uploads/
+
+# ── Database ──────────────────────────────────────────────────────────
+medi_assist.db
+*.sqlite3
+
+# ── OS / IDE ──────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
+*.log
+
+# ── ML model binary (large file — track with Git LFS if needed) ───────
+# ml_service/model/*.pkl
+
+# ── Misc ──────────────────────────────────────────────────────────────
+*.bak
+*.tmp
+coverage/
