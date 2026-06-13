@@ -43,21 +43,6 @@ symptom_aliases = {
     'gas': 'passage_of_gases', 'bloating': 'passage_of_gases',
     'loss of balance': 'loss_of_balance', 'unsteady': 'unsteadiness',
     'slurred speech': 'slurred_speech', 'speech problem': 'slurred_speech',
-    # ── Hindi aliases ──────────────────────────────────────────────────────────
-    'bukhar': 'high_fever', 'bukhaar': 'high_fever', 'tez bukhar': 'high_fever',
-    'sir dard': 'headache', 'sardard': 'headache', 'sar dard': 'headache',
-    'ulti': 'vomiting', 'vomit': 'vomiting', 'ji machalna': 'nausea',
-    'khansi': 'cough', 'khansi aana': 'cough', 'nazla': 'runny_nose',
-    'thakan': 'fatigue', 'kamzori': 'fatigue', 'khujli': 'itching',
-    'daane': 'skin_rash', 'dast': 'diarrhoea', 'pet dard': 'stomach_pain',
-    'seene mein dard': 'chest_pain', 'sans lena mushkil': 'breathlessness',
-    'pasina': 'sweating', 'kaanpna': 'shivering', 'chakkar': 'dizziness',
-    'kabz': 'constipation', 'acidity': 'acidity', 'bhooj na lagna': 'loss_of_appetite',
-    'vajan kam hona': 'weight_loss', 'peeli skin': 'yellowish_skin',
-    'aankhon mein pelapan': 'yellowing_of_eyes', 'dark peshab': 'dark_urine',
-    'baar baar peshab': 'polyuria', 'peshab mein jalan': 'burning_micturition',
-    'gala dard': 'throat_irritation', 'gardan akad': 'stiff_neck',
-    'paani ki kami': 'dehydration', 'badan dard': 'muscle_pain',
 }
 
 

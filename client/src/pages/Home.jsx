@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Brain, Activity, Shield, ArrowRight, Zap, ChevronRight,
-  Sparkles, HeartPulse, FlaskConical, Globe, Languages,
+  Sparkles, HeartPulse, FlaskConical, MessageCircle,
   CheckCircle, Star, Heart, TrendingUp, Users, Award,
-  Stethoscope, MessageCircle,
+  Stethoscope,
 } from 'lucide-react';
 
 const fadeUp = { hidden:{ opacity:0, y:24 }, show:{ opacity:1, y:0, transition:{ duration:.5, ease:[.4,0,.2,1] } } };
@@ -14,13 +14,13 @@ const features = [
   { icon:Brain,     grad:'linear-gradient(135deg,#00d4ff,#6366f1)', tag:'ML Powered',   title:'AI Disease Prediction',   desc:'SVM classifier analyzes 132 symptoms across 41 conditions, returning top-3 differential diagnoses with confidence scores and evidence-based care plans.', stats:['41 diseases','132 symptoms','~99% accuracy'], color:'var(--teal)'   },
   { icon:HeartPulse,grad:'linear-gradient(135deg,#8b5cf6,#ec4899)', tag:'Personalized', title:'Complete Care Plans',      desc:'Beyond diagnosis — get detailed medications, tailored diet charts, clinical precautions, and personalized recovery workouts for each condition.',          stats:['Medications','Diet plans','Workouts'],     color:'var(--purple)' },
   { icon:Shield,    grad:'linear-gradient(135deg,#10b981,#00d4ff)', tag:'Safety First', title:'Emergency Detection',       desc:'Multi-layer emergency screening detects critical symptoms in real time — chest pain, breathlessness, stroke signs — with immediate 108 routing.',       stats:['Real-time scan','108 routing','Zero lag'],  color:'var(--green)'  },
-  { icon:Languages, grad:'linear-gradient(135deg,#f59e0b,#ef4444)', tag:'Multilingual', title:'MediBot · EN + HI',         desc:'Gemini AI health chatbot responds fluently in English and Hindi with context-aware medical guidance, prescription upload, and persistent chat history.',  stats:['English','Hindi','Chat history'],          color:'var(--orange)' },
+  { icon:MessageCircle, grad:'linear-gradient(135deg,#f59e0b,#ef4444)', tag:'AI Assistant', title:'MediBot Health Chat',       desc:'Gemini AI health chatbot with context-aware medical guidance, prescription upload, and persistent chat history.',  stats:['Gemini AI','Chat history','24/7 access'],    color:'var(--orange)' },
 ];
 
 const statsRow = [
   { n:'41+',  label:'Diseases Covered', icon:FlaskConical, color:'var(--teal)'   },
   { n:'132',  label:'Symptom Signals',  icon:Activity,     color:'var(--purple)' },
-  { n:'2',    label:'Languages',        icon:Globe,        color:'var(--green)'  },
+  { n:'24/7', label:'AI Chat Access',   icon:MessageCircle, color:'var(--green)'  },
   { n:'~99%', label:'Model Accuracy',   icon:Zap,          color:'var(--orange)' },
 ];
 
@@ -33,7 +33,7 @@ const steps = [
 const testimonials = [
   { name:'Dr. Priya Sharma',   role:'MBBS, General Physician', text:'The symptom prediction accuracy is impressive. I recommend it to patients for a quick preliminary assessment before consultation.', stars:5, avatar:'PS' },
   { name:'Rahul Mehta',        role:'Engineering Student',      text:'Used it when I had fever and body pain at midnight. Got the exact diagnosis within seconds. Life-saving tool!',                    stars:5, avatar:'RM' },
-  { name:'Ananya Krishnamurthy',role:'Healthcare Researcher',   text:'The multilingual support is a game changer for rural India. Hindi interface makes it accessible to everyone.',                   stars:5, avatar:'AK' },
+  { name:'Ananya Krishnamurthy',role:'Healthcare Researcher',   text:'The AI chatbot makes health information easy to access. Clear answers and chat history help patients stay informed between visits.', stars:5, avatar:'AK' },
 ];
 
 export default function Home() {

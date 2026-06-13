@@ -1,10 +1,8 @@
 const axios = require("axios");
 
-const LANGUAGE_NAMES = { en: "English", hi: "Hindi" };
 const DEFAULT_MODEL = "gemini-2.5-flash-lite";
 
-function buildSystemPrompt(lang, lastDisease, context) {
-  const language = LANGUAGE_NAMES[lang] || "English";
+function buildSystemPrompt(lastDisease, context) {
   const ctx = lastDisease ? `The user's last predicted condition is ${lastDisease}.` : "";
   let history = "";
   if (context?.length) {
@@ -17,7 +15,7 @@ function buildSystemPrompt(lang, lastDisease, context) {
   }
 
   return `You are MediBot, the friendly AI chat assistant inside Medi-Assist.
-Reply in ${language}.
+Reply in English.
 
 Important safety rules:
 - Give general health education only.
@@ -39,7 +37,7 @@ async function getGeminiResponse(message, lang = "en", lastDisease = null, conte
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const payload = {
-    systemInstruction: { parts: [{ text: buildSystemPrompt(lang, lastDisease, context) }] },
+    systemInstruction: { parts: [{ text: buildSystemPrompt(lastDisease, context) }] },
     contents: [{ role: "user", parts: [{ text: message }] }],
     generationConfig: { temperature: 0.4, topP: 0.9, maxOutputTokens: 420 },
   };

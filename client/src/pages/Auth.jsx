@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const perks = [
   'AI-powered disease prediction & diagnosis',
-  'Multilingual MediBot (English & Hindi)',
+  'AI-powered MediBot health assistant',
   'Prescription storage & tracking',
   'Personalized care plans & history',
 ];

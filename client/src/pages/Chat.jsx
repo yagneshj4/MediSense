@@ -2,36 +2,21 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Send, Trash2, Bot, User, Loader2, AlertTriangle,
-  Paperclip, X, Sparkles, ChevronDown, Plus,
+  Paperclip, X, Sparkles, Plus,
   MessageSquare, Clock, Stethoscope,
 } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
-const LANGS = [
-  { code:'en', flag:'🇬🇧', label:'English' },
-  { code:'hi', flag:'🇮🇳', label:'Hindi'   },
+const PROMPTS = [
+  'What are symptoms of diabetes?',
+  'How to manage high blood pressure?',
+  'Best diet for fever recovery?',
+  'When is chest pain serious?',
+  'What is dengue fever?',
+  'How to reduce headache naturally?',
 ];
-
-const PROMPTS = {
-  en: [
-    'What are symptoms of diabetes?',
-    'How to manage high blood pressure?',
-    'Best diet for fever recovery?',
-    'When is chest pain serious?',
-    'What is dengue fever?',
-    'How to reduce headache naturally?',
-  ],
-  hi: [
-    'डायबिटीज के लक्षण क्या हैं?',
-    'हाई ब्लड प्रेशर को कैसे नियंत्रित करें?',
-    'बुखार में क्या खाएं?',
-    'सीने में दर्द कब खतरनाक होता है?',
-    'डेंगू बुखार क्या है?',
-    'सिरदर्द को प्राकृतिक तरीके से कैसे कम करें?',
-  ],
-};
 
 const INIT = [{
   role:'bot',
@@ -112,11 +97,9 @@ export default function Chat() {
   const { isAuth } = useAuth();
   const [msgs, setMsgs]         = useState(INIT);
   const [input, setInput]       = useState('');
-  const [lang, setLang]         = useState('en');
   const [loading, setLoading]   = useState(false);
   const [lastDis, setLastDis]   = useState(null);
   const [file, setFile]         = useState(null);
-  const [showLang, setShowLang] = useState(false);
   const bottomRef = useRef(null);
   const fileRef   = useRef(null);
   const textRef   = useRef(null);
@@ -151,7 +134,7 @@ export default function Chat() {
     }
     try {
       const ctx = msgs.slice(-6).map(m => ({ role:m.role, text:m.text }));
-      const { data } = await api.post('/chat', { message:msg, lang, lastDisease:lastDis, context:ctx });
+      const { data } = await api.post('/chat', { message:msg, lang:'en', lastDisease:lastDis, context:ctx });
       setMsgs(p => [...p, { role:'bot', text:data.response.text, type:data.response.type, timestamp:new Date() }]);
     } catch {
       setMsgs(p => [...p, { role:'bot', text:'⚠️ Something went wrong. Please try again.', timestamp:new Date() }]);
@@ -164,7 +147,6 @@ export default function Chat() {
     toast.success('Chat cleared');
   };
 
-  const curLang = LANGS.find(l => l.code === lang);
   const userMsgCount = msgs.filter(m => m.role === 'user').length;
   const isFresh = msgs.length <= 1;
 
@@ -268,32 +250,6 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* Language selector */}
-          <div style={{ position:'relative' }}>
-            <button onClick={() => setShowLang(!showLang)} style={{
-              display:'flex', alignItems:'center', gap:7,
-              padding:'6px 13px', background:'rgba(255,255,255,.05)',
-              border:'1px solid var(--border)', borderRadius:var_r_md(),
-              color:'var(--t1)', fontSize:'.8rem', cursor:'pointer', transition:'var(--t)',
-            }}>
-              {curLang.flag} {curLang.label} <ChevronDown size={12} style={{ opacity:.6 }}/>
-            </button>
-            <AnimatePresence>
-              {showLang && (
-                <motion.div initial={{ opacity:0, y:-6, scaleY:.9 }} animate={{ opacity:1, y:0, scaleY:1 }} exit={{ opacity:0, y:-6 }}
-                  style={{ position:'absolute', top:'110%', right:0, background:'rgba(8,15,30,.98)', border:'1px solid var(--border)', borderRadius:'var(--r-md)', padding:6, zIndex:100, minWidth:140, boxShadow:'var(--sh-lg)' }}>
-                  {LANGS.map(l => (
-                    <button key={l.code} onClick={() => { setLang(l.code); setShowLang(false); }}
-                      style={{ width:'100%', display:'flex', alignItems:'center', gap:8, padding:'9px 12px', background:'none', border:'none', color:l.code===lang?'var(--teal)':'var(--t2)', fontSize:'.82rem', borderRadius:8, cursor:'pointer', transition:'var(--t)' }}
-                      onMouseEnter={e=>e.currentTarget.style.background='rgba(0,212,255,.08)'}
-                      onMouseLeave={e=>e.currentTarget.style.background='none'}
-                    >{l.flag} {l.label}</button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           <button onClick={clear} className="btn btn-ghost btn-sm" title="Clear chat"><Trash2 size={13}/></button>
         </div>
 
@@ -309,7 +265,7 @@ export default function Chat() {
               <h2 style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.4rem', marginBottom:8 }}>How can I help you today?</h2>
               <p style={{ color:'var(--t3)', fontSize:'.85rem', marginBottom:'2rem' }}>Ask me anything about health, symptoms, or medications.</p>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:8, textAlign:'left', maxWidth:700, margin:'0 auto' }}>
-                {(PROMPTS[lang] || PROMPTS.en).map(p => (
+                {PROMPTS.map(p => (
                   <button key={p} onClick={() => send(p)} style={{
                     padding:'12px 16px', borderRadius:12,
                     background:'rgba(255,255,255,.04)',
@@ -387,5 +343,3 @@ export default function Chat() {
     </div>
   );
 }
-
-function var_r_md() { return 'var(--r-md)'; }
