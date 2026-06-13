@@ -8,9 +8,6 @@ import Auth      from './pages/Auth';
 import Predict   from './pages/Predict';
 import Chat      from './pages/Chat';
 import Dashboard from './pages/Dashboard';
-import About     from './pages/About';
-import Blog      from './pages/Blog';
-import Contact   from './pages/Contact';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 60 * 5, retry: 1 } },
@@ -31,10 +28,6 @@ export default function App() {
                   <Route path="/predict"   element={<Predict />}   />
                   <Route path="/chat"      element={<Chat />}      />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/about"     element={<About />}     />
-                  <Route path="/blog"      element={<Blog />}      />
-                  <Route path="/blog/:id"  element={<Blog />}      />
-                  <Route path="/contact"   element={<Contact />}   />
                   <Route path="*"          element={<Home />}      />
                 </Routes>
               </div>
