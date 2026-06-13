@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
-import Sidebar from './components/Sidebar';
+import Navbar from './components/Sidebar';
 import Home      from './pages/Home';
 import Auth      from './pages/Auth';
 import Predict   from './pages/Predict';
@@ -19,7 +19,7 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <div className="app-layout">
-            <Sidebar />
+            <Navbar />
             <main className="app-main">
               <div className="page-content">
                 <Routes>
