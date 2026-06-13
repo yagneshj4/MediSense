@@ -30,13 +30,12 @@ services:
     environment:
       - PORT=3001
       - MONGO_URI=mongodb://mongodb:27017/mediassist
-      - JWT_SECRET=dev_secret_key_change_in_production
+      - JWT_SECRET=${JWT_SECRET:-dev_secret_key_change_in_production}
       - ML_SERVICE_URL=http://ml_service:8000
       - CLIENT_URL=http://localhost:5000
-      - CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-      - CLOUDINARY_API_KEY=your_cloudinary_api_key
-      - CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-      - ADMIN_SECRET_KEY=admin_secret_registration_key
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     restart: unless-stopped
 
   client:

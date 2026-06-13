@@ -14,6 +14,11 @@ sys.path.insert(0, BASE_DIR)
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import sklearn
+
+print(f"[ML Service] Starting with scikit-learn version: {sklearn.__version__}")
+if not sklearn.__version__.startswith("1.9"):
+    print(f"[ML Service WARNING] Version mismatch! Pickled model trained on 1.9.0, running {sklearn.__version__}.")
 
 from app.data   import helper
 from app.model  import get_top3_predictions, symptoms_dict
