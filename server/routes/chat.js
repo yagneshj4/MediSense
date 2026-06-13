@@ -1,11 +1,12 @@
 const express = require("express");
 const { sendMessage, getChatHistory, clearChatHistory } = require("../controllers/chatController");
 const { protect } = require("../middleware/authMiddleware");
+const { chatLimiter } = require("../middleware/rateLimiter");
 
 const router = express.Router();
 
 // sendMessage works for both auth and anon users (history only saved when auth'd)
-router.post("/", (req, res, next) => {
+router.post("/", chatLimiter, (req, res, next) => {
   // Optionally attach user if token present, but don't reject if missing
   const authHeader = req.headers.authorization;
   if (authHeader?.startsWith("Bearer ")) {

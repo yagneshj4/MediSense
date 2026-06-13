@@ -142,6 +142,23 @@ export default function Dashboard() {
     catch { toast.error('Delete failed'); }
   };
 
+  const handleSecureDownload = async (endpoint, filename) => {
+    try {
+      const response = await api.get(endpoint, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("[Download Error]", err);
+      toast.error('Failed to download file.');
+    }
+  };
+
   const memberSince = new Date(user?.createdAt || Date.now()).toLocaleDateString('en-IN', { month:'short', year:'numeric' });
   const daysSince   = Math.max(1, Math.floor((Date.now() - new Date(user?.createdAt || Date.now())) / 86400000));
   const userMsgs    = chatHistory.filter(m => m.role === 'user').length;
@@ -260,9 +277,9 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div style={{ display:'flex', gap:6 }}>
-                    <a href={`/api/predictions/${p._id}/report?token=${localStorage.getItem('token')}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" title="Download PDF Report" style={{ gap:5 }}>
+                    <button onClick={() => handleSecureDownload(`/predictions/${p._id}/report`, `Medi_Assist_Report_${p._id}.pdf`)} className="btn btn-ghost btn-sm" title="Download PDF Report" style={{ gap:5 }}>
                       <Download size={12}/><span style={{ fontSize:'.72rem' }}>PDF</span>
-                    </a>
+                    </button>
                   </div>
                 </motion.div>
               ))}
@@ -299,7 +316,7 @@ export default function Dashboard() {
                     <div style={{ fontWeight:500, fontSize:'.88rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.originalName}</div>
                     <div style={{ fontSize:'.7rem', color:'var(--t3)' }}>{new Date(p.createdAt).toLocaleDateString('en-IN')} · {p.fileType?.toUpperCase()}{p.note?` · ${p.note}`:''}</div>
                   </div>
-                  <a href={`/api/prescriptions/${p._id}/file?token=${localStorage.getItem('token')}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm"><Download size={13}/></a>
+                  <button onClick={() => handleSecureDownload(`/prescriptions/${p._id}/file`, p.originalName)} className="btn btn-ghost btn-sm"><Download size={13}/></button>
                   <button onClick={() => delPrescription(p._id)} className="btn btn-red btn-sm"><Trash2 size={13}/></button>
                 </motion.div>
               ))}
