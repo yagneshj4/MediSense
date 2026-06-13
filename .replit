@@ -1,0 +1,18 @@
+modules = ["nodejs-20", "python-3.12", "web"]
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+PORT = "3001"
+ML_PORT = "5001"
+ML_SERVICE_URL = "http://localhost:5001"
+CLIENT_URL = "http://localhost:5000"
+NODE_ENV = "development"
+JWT_EXPIRES_IN = "7d"
+GEMINI_MODEL = "gemini-1.5-flash"
