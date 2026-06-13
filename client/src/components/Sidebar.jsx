@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity, Brain, MessageSquare, LayoutDashboard,
-  Info, Mail, Code2, BookOpen, LogOut, ChevronLeft,
+  Info, Mail, BookOpen, LogOut, ChevronLeft,
   ChevronRight, Stethoscope,
 } from 'lucide-react';
 
@@ -17,7 +17,6 @@ const nav = [
   { to:'/about',    icon: Info,           label:'About'     },
   { to:'/blog',     icon: BookOpen,       label:'Blog'      },
   { to:'/contact',  icon: Mail,           label:'Contact'   },
-  { to:'/developer',icon: Code2,          label:'Developer' },
 ];
 
 export default function Sidebar() {

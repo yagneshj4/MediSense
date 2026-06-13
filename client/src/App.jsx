@@ -11,7 +11,6 @@ import Dashboard from './pages/Dashboard';
 import About     from './pages/About';
 import Blog      from './pages/Blog';
 import Contact   from './pages/Contact';
-import Developer from './pages/Developer';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 60 * 5, retry: 1 } },
@@ -36,7 +35,6 @@ export default function App() {
                   <Route path="/blog"      element={<Blog />}      />
                   <Route path="/blog/:id"  element={<Blog />}      />
                   <Route path="/contact"   element={<Contact />}   />
-                  <Route path="/developer" element={<Developer />} />
                   <Route path="*"          element={<Home />}      />
                 </Routes>
               </div>
