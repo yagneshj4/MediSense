@@ -45,28 +45,13 @@ symptoms_dict = {
     'red_sore_around_nose': 130, 'yellow_crust_ooze': 131
 }
 
-diseases_list = {
-    15: 'Fungal infection', 4: 'Allergy', 16: 'GERD',
-    9: 'Chronic cholestasis', 14: 'Drug Reaction', 33: 'Peptic ulcer disease',
-    1: 'AIDS', 12: 'Diabetes', 17: 'Gastroenteritis', 6: 'Bronchial Asthma',
-    23: 'Hypertension', 30: 'Migraine', 7: 'Cervical spondylosis',
-    32: 'Paralysis (brain hemorrhage)', 28: 'Jaundice', 29: 'Malaria',
-    8: 'Chicken pox', 11: 'Dengue', 37: 'Typhoid', 40: 'hepatitis A',
-    19: 'Hepatitis B', 20: 'Hepatitis C', 21: 'Hepatitis D', 22: 'Hepatitis E',
-    3: 'Alcoholic hepatitis', 36: 'Tuberculosis', 10: 'Common Cold',
-    34: 'Pneumonia', 13: 'Dimorphic hemmorhoids(piles)', 18: 'Heart attack',
-    39: 'Varicose veins', 26: 'Hypothyroidism', 24: 'Hyperthyroidism',
-    25: 'Hypoglycemia', 31: 'Osteoarthristis', 5: 'Arthritis',
-    0: 'Paroxysmal Positional Vertigo', 2: 'Acne',
-    38: 'Urinary tract infection', 35: 'Psoriasis', 27: 'Impetigo'
-}
+import os
+from app.data import diseases_list, severity_map
 
-# ── Severity weight map loaded from datasets at runtime ───────────────────────
-# Imported here to avoid circular import; populated by data.py on first use
-severity_map: dict = {}
-
-# ── Load trained SVC ──────────────────────────────────────────────────────────
-svc = pickle.load(open('model/svc.pkl', 'rb'))
+# ── Load trained SVC dynamically using absolute paths ─────────────────────────
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(os.path.dirname(APP_DIR), 'model', 'svc.pkl')
+svc = pickle.load(open(MODEL_PATH, 'rb'))
 
 
 def build_input_vector(patient_symptoms: list) -> tuple:

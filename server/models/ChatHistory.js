@@ -8,7 +8,7 @@ const messageSchema = new mongoose.Schema({
 
 const chatHistorySchema = new mongoose.Schema(
   {
-    userId:      { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId:      { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
     messages:    [messageSchema],
     lastDisease: { type: String, default: null },
     lang:        { type: String, default: "en" },

@@ -39,6 +39,15 @@ Thumbs.db
 # ── ML model binary (large file — track with Git LFS if needed) ───────
 # ml_service/model/*.pkl
 
+# ── Replit / Platform configs ─────────────────────────────────────────
+.replit
+replit.nix
+
+# ── Temporary / AI-generated reports ─────────────────────────────────
+codebase_audit_report.md
+UPDATED.md
+attached_assets/
+
 # ── Misc ──────────────────────────────────────────────────────────────
 *.bak
 *.tmp

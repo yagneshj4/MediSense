@@ -1,14 +1,18 @@
+import os
 import ast
 import pandas as pd
 
-# ── Load all datasets ────────────────────────────────────────────────────────
-sym_des     = pd.read_csv("datasets/symtoms_df.csv")
-precautions = pd.read_csv("datasets/precautions_df.csv")
-workout     = pd.read_csv("datasets/workout_df.csv")
-description = pd.read_csv("datasets/description.csv")
-medications = pd.read_csv("datasets/medications.csv")
-diets       = pd.read_csv("datasets/diets.csv")
-severity_df = pd.read_csv("datasets/Symptomseverity.csv")
+# Resolve dynamic absolute paths relative to this file
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+DATASETS_DIR = os.path.join(os.path.dirname(APP_DIR), "datasets")
+
+sym_des     = pd.read_csv(os.path.join(DATASETS_DIR, "symtoms_df.csv"))
+precautions = pd.read_csv(os.path.join(DATASETS_DIR, "precautions_df.csv"))
+workout     = pd.read_csv(os.path.join(DATASETS_DIR, "workout_df.csv"))
+description = pd.read_csv(os.path.join(DATASETS_DIR, "description.csv"))
+medications = pd.read_csv(os.path.join(DATASETS_DIR, "medications.csv"))
+diets       = pd.read_csv(os.path.join(DATASETS_DIR, "diets.csv"))
+severity_df = pd.read_csv(os.path.join(DATASETS_DIR, "Symptomseverity.csv"))
 
 # ── Normalize disease name casing ────────────────────────────────────────────
 for df in [description, precautions, medications, diets]:

@@ -15,14 +15,11 @@ sys.path.insert(0, BASE_DIR)
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from app.data   import helper, severity_map as _sev_ref
-from app.model  import get_top3_predictions, severity_map as model_sev, symptoms_dict
+from app.data   import helper
+from app.model  import get_top3_predictions, symptoms_dict
 from app.nlp    import extract_symptoms_from_text
 from app.safety import confidence_note, detect_emergency, emergency_message
 
-import app.model as _model_mod
-import app.data  as _data_mod
-_model_mod.severity_map = _data_mod.severity_map
 
 app = Flask(__name__)
 CORS(app)  # Express backend is on a different port
