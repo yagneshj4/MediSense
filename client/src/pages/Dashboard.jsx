@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import {
   Activity, MessageSquare, FileText, Trash2,
   Download, Calendar, Plus, ChevronRight,
   TrendingUp, Brain, Heart, Clock, Zap,
-  ArrowUpRight, Shield,
+  ArrowUpRight, Shield, Paperclip, Search,
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -24,60 +24,7 @@ function SkeletonCard() {
   );
 }
 
-function HealthScore({ predictions, chatCount }) {
-  const score = Math.min(100, Math.round(
-    (predictions.length > 0 ? 30 : 0) +
-    (chatCount > 0 ? 25 : 0) +
-    (predictions.length > 2 ? 20 : 0) +
-    25
-  ));
-  const color = score >= 80 ? 'var(--green)' : score >= 50 ? 'var(--orange)' : 'var(--red)';
-  const label = score >= 80 ? 'Excellent' : score >= 50 ? 'Good' : 'Getting started';
-  const deg = (score / 100) * 360;
-  return (
-    <div className="glass" style={{ padding:'2rem', display:'flex', alignItems:'center', gap:'2rem', background:'linear-gradient(135deg,rgba(0,212,255,.04),rgba(139,92,246,.04))', borderColor:'rgba(0,212,255,.12)', flexWrap:'wrap' }}>
-      {/* Donut */}
-      <div style={{ textAlign:'center', flexShrink:0 }}>
-        <div style={{ width:120, height:120, borderRadius:'50%', background:`conic-gradient(${color} ${deg}deg,rgba(255,255,255,.06) 0deg)`, display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }}>
-          <div style={{ width:92, height:92, borderRadius:'50%', background:'var(--bg-2)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
-            <span style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.8rem', color, lineHeight:1 }}>{score}</span>
-            <span style={{ fontSize:'.6rem', color:'var(--t3)', textTransform:'uppercase', letterSpacing:'.06em' }}>/ 100</span>
-          </div>
-        </div>
-        <div style={{ marginTop:8, fontSize:'.78rem', fontWeight:600, color }}>{label}</div>
-      </div>
-      {/* Info */}
-      <div style={{ flex:1, minWidth:160 }}>
-        <div style={{ fontSize:'.72rem', color:'var(--t3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', marginBottom:6 }}>Health Engagement Score</div>
-        <h2 style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.5rem', lineHeight:1.1, marginBottom:8 }}>
-          Your health profile <span className="grad">is active</span>
-        </h2>
-        <p style={{ color:'var(--t2)', fontSize:'.83rem', lineHeight:1.7, marginBottom:'1.25rem' }}>
-          Score based on diagnosis history, chatbot interactions, and platform engagement.
-        </p>
-        <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-          <Link to="/predict" className="btn btn-primary btn-sm"><Brain size={13}/>New Diagnosis</Link>
-          <Link to="/chat"    className="btn btn-ghost   btn-sm"><MessageSquare size={13}/>Ask MediBot</Link>
-        </div>
-      </div>
-      {/* Mini stats */}
-      <div style={{ display:'flex', flexDirection:'column', gap:8, flexShrink:0 }}>
-        {[
-          { label:'Diagnoses Run',    value:predictions.length, color:'var(--teal)',   icon:Activity },
-          { label:'Chat Messages',    value:chatCount,          color:'var(--purple)', icon:MessageSquare },
-        ].map(({ label, value, color:c, icon:Icon }) => (
-          <div key={label} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:11, background:'rgba(255,255,255,.04)', border:'1px solid var(--border)' }}>
-            <Icon size={14} style={{ color:c, flexShrink:0 }}/>
-            <div>
-              <div style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.2rem', color:c, lineHeight:1 }}>{value}</div>
-              <div style={{ fontSize:'.68rem', color:'var(--t3)' }}>{label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+
 
 function StatCard({ icon:Icon, label, value, color, sub, trend }) {
   return (
@@ -127,6 +74,24 @@ export default function Dashboard() {
   const [predPage,      setPredPage]      = useState(1);
   const [chatPage,      setChatPage]      = useState(1);
 
+  // Medical Records Vault states
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadCategory, setUploadCategory] = useState('Prescription');
+  const [uploadDescription, setUploadDescription] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash === '#vault' && !loading) {
+      setTimeout(() => {
+        const el = document.getElementById('vault');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [hash, loading]);
+
   if (!isAuth) return <Navigate to="/auth"/>;
 
   useEffect(() => {
@@ -159,6 +124,75 @@ export default function Dashboard() {
     }
   };
 
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!uploadFile) {
+      toast.error('Please select a file to upload.');
+      return;
+    }
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', uploadFile);
+      fd.append('category', uploadCategory);
+      fd.append('description', uploadDescription);
+
+      const res = await api.post('/prescriptions/upload', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      if (res.data.success) {
+        toast.success('Document saved to Medical Records Vault!');
+        setPrescriptions(prev => [res.data.prescription, ...prev]);
+        setUploadFile(null);
+        setUploadDescription('');
+        setUploadCategory('Prescription');
+      } else {
+        toast.error('Upload failed');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to upload file. Supports PDF/JPG/PNG/WEBP under 8MB.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getCategoryColor = (cat) => {
+    switch (cat) {
+      case 'Prescription':   return { bg: 'rgba(16,185,129,.12)', text: 'var(--green)', border: 'rgba(16,185,129,.25)' };
+      case 'Lab Report':     return { bg: 'rgba(139,92,246,.12)', text: 'var(--purple)', border: 'rgba(139,92,246,.25)' };
+      case 'Scan':           return { bg: 'rgba(59,130,246,.12)', text: 'var(--blue)', border: 'rgba(59,130,246,.25)' };
+      case 'Medical Image':  return { bg: 'rgba(20,184,166,.12)', text: 'var(--teal)', border: 'rgba(20,184,166,.25)' };
+      case 'Insurance':      return { bg: 'rgba(245,158,11,.12)', text: 'var(--orange)', border: 'rgba(245,158,11,.25)' };
+      default:               return { bg: 'rgba(255,255,255,.06)', text: 'var(--t3)', border: 'var(--border)' };
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    try {
+      const d = new Date(dateStr);
+      const day = String(d.getDate()).padStart(2, '0');
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const filteredPrescriptions = prescriptions.filter(p => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return true;
+    return (
+      p.originalName?.toLowerCase().includes(query) ||
+      p.category?.toLowerCase().includes(query) ||
+      p.description?.toLowerCase().includes(query) ||
+      p.note?.toLowerCase().includes(query)
+    );
+  });
+
   const memberSince = new Date(user?.createdAt || Date.now()).toLocaleDateString('en-IN', { month:'short', year:'numeric' });
   const daysSince   = Math.max(1, Math.floor((Date.now() - new Date(user?.createdAt || Date.now())) / 86400000));
   const userMsgs    = chatHistory.filter(m => m.role === 'user').length;
@@ -166,7 +200,7 @@ export default function Dashboard() {
   const stats = [
     { icon:Activity,       label:'Diagnoses Run',    value:predictions.length,   color:'var(--teal)',   sub:'Symptom checks',    trend:predictions.length > 0 ? '+'+predictions.length : null },
     { icon:MessageSquare,  label:'Chat Messages',    value:userMsgs,             color:'var(--purple)', sub:'With MediBot',      trend:userMsgs > 0 ? '+'+userMsgs : null },
-    { icon:FileText,       label:'Prescriptions',    value:prescriptions.length, color:'var(--green)',  sub:'Uploaded & stored', trend:null },
+    { icon:Shield,         label:'Medical Vault',    value:prescriptions.length, color:'var(--green)',  sub:'Personal Health Records', trend:null },
     { icon:Calendar,       label:'Days Active',      value:daysSince,            color:'var(--orange)', sub:`Since ${memberSince}`, trend:null },
   ];
 
@@ -217,36 +251,6 @@ export default function Dashboard() {
         ))}
       </motion.div>
 
-      {/* ── Health score ── */}
-      <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0, transition:{ delay:.2 } }} style={{ marginBottom:'1.5rem' }}>
-        <HealthScore predictions={predictions} chatCount={userMsgs}/>
-      </motion.div>
-
-      {/* ── Quick Actions ── */}
-      <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0, transition:{ delay:.25 } }} style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:'1rem', marginBottom:'1.5rem' }}>
-        {[
-          { icon:Brain,         label:'Run AI Diagnosis', desc:'Check your symptoms now',    to:'/predict', color:'var(--teal)',   grad:'linear-gradient(135deg,rgba(0,212,255,.12),rgba(0,212,255,.06))' },
-          { icon:MessageSquare, label:'Ask MediBot',      desc:'Get instant health answers', to:'/chat',    color:'var(--purple)', grad:'linear-gradient(135deg,rgba(139,92,246,.12),rgba(139,92,246,.06))' },
-          { icon:FileText,      label:'Upload Prescription', desc:'Save your medical files', to:'/chat',    color:'var(--green)',  grad:'linear-gradient(135deg,rgba(16,185,129,.12),rgba(16,185,129,.06))' },
-          { icon:Shield,        label:'Safety Check',     desc:'Emergency symptoms info',    to:'/predict', color:'var(--orange)', grad:'linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.06))' },
-        ].map(({ icon:Icon, label, desc, to, color, grad }) => (
-          <Link key={label} to={to} style={{
-            display:'flex', flexDirection:'column', gap:10, padding:'1.25rem',
-            background:grad, border:`1px solid ${color}20`, borderRadius:'var(--r-lg)',
-            transition:'transform .2s,box-shadow .2s',
-          }}
-          onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.boxShadow=`0 12px 32px ${color}20`;}}
-          onMouseLeave={e=>{e.currentTarget.style.transform='none';e.currentTarget.style.boxShadow='none';}}
-          >
-            <Icon size={22} style={{ color }}/>
-            <div>
-              <div style={{ fontFamily:'var(--f-display)', fontWeight:700, fontSize:'.88rem', marginBottom:3 }}>{label}</div>
-              <div style={{ fontSize:'.73rem', color:'var(--t3)' }}>{desc}</div>
-            </div>
-            <ArrowUpRight size={14} style={{ color, marginTop:'auto', alignSelf:'flex-end' }}/>
-          </Link>
-        ))}
-      </motion.div>
 
       {/* ── Diagnosis History ── */}
       <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0, transition:{ delay:.3 } }} className="glass" style={{ padding:'1.75rem', marginBottom:'1.25rem' }}>
@@ -295,68 +299,207 @@ export default function Dashboard() {
         )}
       </motion.div>
 
-      {/* ── Prescriptions ── */}
-      <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0, transition:{ delay:.35 } }} className="glass" style={{ padding:'1.75rem', marginBottom:'1.25rem' }}>
-        <SectionHeader icon={FileText} title="Prescriptions" sub={`${prescriptions.length} uploaded`} link="/chat" linkLabel="Upload via Chat" color="var(--green)"/>
-        {prescriptions.length === 0 ? (
+      {/* ── Medical Records Vault ── */}
+      <motion.div id="vault" initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0, transition:{ delay:.35 } }} className="glass" style={{ padding:'1.75rem', marginBottom:'1.25rem' }}>
+        <SectionHeader icon={Shield} title="Medical Records Vault" sub={`${filteredPrescriptions.length} of ${prescriptions.length} records shown`} color="var(--green)"/>
+        
+        {/* Upload Form */}
+        <form onSubmit={handleUpload} style={{
+          background: 'rgba(255, 255, 255, 0.01)',
+          border: '1px dashed rgba(16, 185, 129, 0.22)',
+          borderRadius: 12,
+          padding: '1.25rem',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <span style={{ fontSize: '.84rem', fontWeight: 700, color: 'var(--t1)', display: 'block', marginBottom: 2 }}>Upload Document or Photo</span>
+              <span style={{ fontSize: '.7rem', color: 'var(--t3)' }}>Supported formats: PDF, JPG, PNG, WEBP (Max 8MB)</span>
+            </div>
+            <div>
+              <input 
+                id="vault-file-input"
+                type="file" 
+                accept=".png,.jpg,.jpeg,.webp,.pdf" 
+                style={{ display: 'none' }} 
+                onChange={(e) => setUploadFile(e.target.files[0] || null)}
+              />
+              <button 
+                type="button"
+                onClick={() => document.getElementById('vault-file-input').click()} 
+                className="btn btn-ghost btn-sm" 
+                style={{ borderColor: uploadFile ? 'var(--green)' : 'var(--border)', color: uploadFile ? 'var(--green)' : 'var(--t2)', display: 'flex', alignItems: 'center', gap: 6 }}
+              >
+                <Paperclip size={13}/>
+                {uploadFile ? 'Change Selected File' : 'Select Document'}
+              </button>
+            </div>
+          </div>
+
+          {uploadFile && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '12px', background: 'rgba(16, 185, 129, 0.04)', borderRadius: 10, border: '1px solid rgba(16, 185, 129, 0.12)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '.78rem' }}>
+                <span style={{ fontWeight: 600, color: 'var(--green)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80%' }}>
+                  📎 {uploadFile.name} ({(uploadFile.size / (1024 * 1024)).toFixed(2)} MB)
+                </span>
+                <button type="button" onClick={() => setUploadFile(null)} style={{ background: 'none', border: 'none', color: 'var(--red)', cursor: 'pointer', fontSize: '.72rem', fontWeight: 600 }}>Remove</button>
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
+                  <label style={{ fontSize: '.65rem', color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: '.05em', fontWeight: 700 }}>Category</label>
+                  <select 
+                    value={uploadCategory} 
+                    onChange={(e) => setUploadCategory(e.target.value)}
+                    style={{
+                      background: 'var(--bg-2)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 8,
+                      padding: '7px 10px',
+                      fontSize: '.82rem',
+                      color: 'var(--t1)',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {["Prescription", "Lab Report", "Scan", "Medical Image", "Insurance", "Other"].map(cat => (
+                      <option key={cat} value={cat} style={{ background: 'var(--bg-2)' }}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 200 }}>
+                  <label style={{ fontSize: '.65rem', color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: '.05em', fontWeight: 700 }}>Description / Note</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Blood report, Chest X-ray..." 
+                    value={uploadDescription}
+                    onChange={(e) => setUploadDescription(e.target.value)}
+                    style={{
+                      background: 'var(--bg-2)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 8,
+                      padding: '7px 10px',
+                      fontSize: '.82rem',
+                      color: 'var(--t1)',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={uploading} 
+                  className="btn btn-primary btn-sm"
+                  style={{
+                    background: 'var(--green)',
+                    color: '#03070e',
+                    border: 'none',
+                    alignSelf: 'flex-end',
+                    padding: '8px 16px',
+                    fontWeight: 600,
+                    height: '34px'
+                  }}
+                >
+                  {uploading ? 'Saving...' : 'Save to Vault'}
+                </button>
+              </div>
+            </div>
+          )}
+        </form>
+
+        {/* Search Bar */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid var(--border)',
+          borderRadius: 10,
+          padding: '8px 12px',
+          marginBottom: '1rem'
+        }}>
+          <Search size={14} style={{ color: 'var(--t3)' }}/>
+          <input 
+            type="text" 
+            placeholder="Search vault by file name, category, or description..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              flex: 1,
+              background: 'none',
+              border: 'none',
+              outline: 'none',
+              color: 'var(--t1)',
+              fontSize: '.84rem'
+            }}
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', color: 'var(--t3)', cursor: 'pointer', fontSize: '.75rem' }}>Clear</button>
+          )}
+        </div>
+
+        {filteredPrescriptions.length === 0 ? (
           <div className="empty-state">
             <FileText size={40} style={{ color:'var(--t3)', opacity:.35 }}/>
-            <p style={{ color:'var(--t3)', fontSize:'.88rem' }}>No prescriptions yet</p>
-            <Link to="/chat" className="btn btn-ghost btn-sm">Upload in MediBot</Link>
+            <p style={{ color:'var(--t3)', fontSize:'.88rem' }}>
+              {prescriptions.length === 0 ? 'No documents in your vault yet.' : 'No matching records found.'}
+            </p>
+            {prescriptions.length === 0 && (
+              <span style={{ fontSize: '.75rem', color: 'var(--t4)' }}>Select a file above to save your first Personal Health Record.</span>
+            )}
           </div>
         ) : (
           <>
             <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-              {prescriptions.slice((rxPage-1)*PER, rxPage*PER).map((p, i) => (
-                <motion.div key={p._id} initial={{ opacity:0, x:-10 }} animate={{ opacity:1, x:0 }} transition={{ delay:i*.04 }} className="table-row">
-                  <div style={{ width:36, height:36, borderRadius:10, background:'rgba(16,185,129,.1)', border:'1px solid rgba(16,185,129,.18)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                    <FileText size={15} style={{ color:'var(--green)' }}/>
-                  </div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontWeight:500, fontSize:'.88rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.originalName}</div>
-                    <div style={{ fontSize:'.7rem', color:'var(--t3)' }}>{new Date(p.createdAt).toLocaleDateString('en-IN')} · {p.fileType?.toUpperCase()}{p.note?` · ${p.note}`:''}</div>
-                  </div>
-                  <button onClick={() => handleSecureDownload(`/prescriptions/${p._id}/file`, p.originalName)} className="btn btn-ghost btn-sm"><Download size={13}/></button>
-                  <button onClick={() => delPrescription(p._id)} className="btn btn-red btn-sm"><Trash2 size={13}/></button>
-                </motion.div>
-              ))}
+              {filteredPrescriptions.slice((rxPage-1)*PER, rxPage*PER).map((p, i) => {
+                const badge = getCategoryColor(p.category || 'Other');
+                return (
+                  <motion.div key={p._id} initial={{ opacity:0, x:-10 }} animate={{ opacity:1, x:0 }} transition={{ delay:i*.04 }} className="table-row">
+                    <div style={{ width:36, height:36, borderRadius:10, background:badge.bg, border:`1px solid ${badge.border}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <FileText size={15} style={{ color:badge.text }}/>
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span 
+                          onClick={() => handleSecureDownload(`/prescriptions/${p._id}/file`, p.originalName)}
+                          style={{ fontWeight:500, fontSize:'.88rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color: 'var(--teal)', cursor: 'pointer', textDecoration: 'underline' }}
+                        >
+                          {p.originalName}
+                        </span>
+                        <span style={{
+                          fontSize: '.62rem',
+                          fontWeight: 700,
+                          padding: '2px 6px',
+                          borderRadius: 6,
+                          background: badge.bg,
+                          color: badge.text,
+                          border: `1px solid ${badge.border}`,
+                          textTransform: 'uppercase',
+                          letterSpacing: '.03em'
+                        }}>
+                          {p.category || 'Other'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize:'.7rem', color:'var(--t3)', marginTop: 2 }}>
+                        Uploaded: {formatDate(p.createdAt)} · {p.fileType?.toUpperCase()}
+                        {(p.description || p.note) ? ` · ${p.description || p.note}` : ''}
+                      </div>
+                    </div>
+                    <button onClick={() => handleSecureDownload(`/prescriptions/${p._id}/file`, p.originalName)} className="btn btn-ghost btn-sm" title="Download Record"><Download size={13}/></button>
+                    <button onClick={() => delPrescription(p._id)} className="btn btn-red btn-sm" title="Delete Record"><Trash2 size={13}/></button>
+                  </motion.div>
+                );
+              })}
             </div>
-            {Math.ceil(prescriptions.length/PER) > 1 && (
+            {Math.ceil(filteredPrescriptions.length/PER) > 1 && (
               <div style={{ display:'flex', justifyContent:'center', alignItems:'center', gap:10, marginTop:'1rem' }}>
                 <button disabled={rxPage===1} onClick={()=>setRxPage(p=>p-1)} className="btn btn-ghost btn-sm" style={{ opacity:rxPage===1?.38:1 }}>← Prev</button>
-                <span style={{ fontSize:'.75rem', color:'var(--t3)' }}>Page {rxPage} of {Math.ceil(prescriptions.length/PER)}</span>
-                <button disabled={rxPage===Math.ceil(prescriptions.length/PER)} onClick={()=>setRxPage(p=>p+1)} className="btn btn-ghost btn-sm" style={{ opacity:rxPage===Math.ceil(prescriptions.length/PER)?.38:1 }}>Next →</button>
-              </div>
-            )}
-          </>
-        )}
-      </motion.div>
-
-      {/* ── Recent Chat ── */}
-      <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0, transition:{ delay:.4 } }} className="glass" style={{ padding:'1.75rem' }}>
-        <SectionHeader icon={MessageSquare} title="Recent MediBot Conversations" sub={`${chatHistory.length} messages`} link="/chat" linkLabel="Open Chat" color="var(--purple)"/>
-        {chatHistory.length === 0 ? (
-          <div className="empty-state">
-            <MessageSquare size={40} style={{ color:'var(--t3)', opacity:.35 }}/>
-            <p style={{ color:'var(--t3)', fontSize:'.88rem' }}>No conversations yet</p>
-            <Link to="/chat" className="btn btn-ghost btn-sm">Start chatting</Link>
-          </div>
-        ) : (
-          <>
-            <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-              {[...chatHistory].reverse().slice((chatPage-1)*PER, chatPage*PER).map((m, i) => (
-                <div key={i} className="table-row">
-                  <span className={`badge ${m.role==='user'?'badge-teal':'badge-purple'}`} style={{ flexShrink:0, fontSize:'.62rem' }}>{m.role}</span>
-                  <p style={{ flex:1, color:'var(--t2)', fontSize:'.82rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{m.text}</p>
-                  {m.timestamp && <span style={{ fontSize:'.65rem', color:'var(--t3)', flexShrink:0 }}>{new Date(m.timestamp).toLocaleTimeString([],{ hour:'2-digit', minute:'2-digit' })}</span>}
-                </div>
-              ))}
-            </div>
-            {Math.ceil(chatHistory.length/PER) > 1 && (
-              <div style={{ display:'flex', justifyContent:'center', alignItems:'center', gap:10, marginTop:'1rem' }}>
-                <button disabled={chatPage===1} onClick={()=>setChatPage(p=>p-1)} className="btn btn-ghost btn-sm" style={{ opacity:chatPage===1?.38:1 }}>← Prev</button>
-                <span style={{ fontSize:'.75rem', color:'var(--t3)' }}>Page {chatPage} of {Math.ceil(chatHistory.length/PER)}</span>
-                <button disabled={chatPage===Math.ceil(chatHistory.length/PER)} onClick={()=>setChatPage(p=>p+1)} className="btn btn-ghost btn-sm" style={{ opacity:chatPage===Math.ceil(chatHistory.length/PER)?.38:1 }}>Next →</button>
+                <span style={{ fontSize:'.75rem', color:'var(--t3)' }}>Page {rxPage} of {Math.ceil(filteredPrescriptions.length/PER)}</span>
+                <button disabled={rxPage===Math.ceil(filteredPrescriptions.length/PER)} onClick={()=>setRxPage(p=>p+1)} className="btn btn-ghost btn-sm" style={{ opacity:rxPage===Math.ceil(filteredPrescriptions.length/PER)?.38:1 }}>Next →</button>
               </div>
             )}
           </>

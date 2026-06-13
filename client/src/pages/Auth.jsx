@@ -41,18 +41,21 @@ export default function Auth() {
   };
 
   return (
-    <div style={{ minHeight:'100vh', display:'grid', gridTemplateColumns:'1fr 1fr', overflow:'hidden' }}>
-
-      {/* ── Left panel — branding ── */}
-      <div style={{
-        background:'linear-gradient(160deg,rgba(0,212,255,0.04),rgba(139,92,246,0.07))',
-        borderRight:'1px solid var(--border)',
+    <div style={{
+      minHeight:'86vh', display:'flex', alignItems:'center', justifyContent:'center',
+      padding:'2rem 1rem', position:'relative', gap:'2rem', flexWrap:'wrap'
+    }}>
+      {/* Left side card - visual/branding (desktop only) */}
+      <div className="glass desktop-nav" style={{
+        width:450, height:580,
+        background:'linear-gradient(160deg,rgba(16,185,129,0.04),rgba(13,148,136,0.07))',
+        borderColor:'var(--border)',
         padding:'3.5rem',
         display:'flex', flexDirection:'column', justifyContent:'space-between',
         position:'relative', overflow:'hidden',
       }}>
-        <div className="orb" style={{ width:500, height:500, top:'-20%', left:'-20%', background:'radial-gradient(circle,rgba(0,212,255,0.09),transparent 60%)' }} />
-        <div className="orb" style={{ width:450, height:450, bottom:'-20%', right:'-15%', background:'radial-gradient(circle,rgba(139,92,246,0.1),transparent 60%)' }} />
+        <div className="orb" style={{ width:500, height:500, top:'-20%', left:'-20%', background:'radial-gradient(circle,rgba(16,185,129,0.09),transparent 60%)' }} />
+        <div className="orb" style={{ width:450, height:450, bottom:'-20%', right:'-15%', background:'radial-gradient(circle,rgba(13,148,136,0.1),transparent 60%)' }} />
 
         {/* Logo */}
         <div style={{ display:'flex', alignItems:'center', gap:12, position:'relative', zIndex:1 }}>
@@ -60,9 +63,9 @@ export default function Auth() {
             width:44, height:44, borderRadius:14,
             background:'linear-gradient(135deg,var(--teal),var(--purple))',
             display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 0 24px rgba(0,212,255,0.3)',
+            boxShadow:'0 0 24px rgba(16,185,129,0.25)',
           }}>
-            <Stethoscope size={22} color="#04090f" />
+            <Stethoscope size={22} color="#ffffff" />
           </div>
           <div>
             <div style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.1rem' }}>Medi-Assist</div>
@@ -72,19 +75,19 @@ export default function Auth() {
 
         {/* Main message */}
         <div style={{ position:'relative', zIndex:1 }}>
-          <div style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'4px 12px 4px 5px', borderRadius:99, background:'rgba(0,212,255,0.08)', border:'1px solid rgba(0,212,255,0.16)', marginBottom:'1.5rem' }}>
-            <span style={{ background:'linear-gradient(135deg,var(--teal),var(--purple))', borderRadius:99, padding:'2px 9px', fontSize:'.62rem', fontWeight:800, color:'#04090f', textTransform:'uppercase', letterSpacing:'.08em' }}>Free</span>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'4px 12px 4px 5px', borderRadius:99, background:'rgba(16,185,129,0.08)', border:'1px solid rgba(16,185,129,0.16)', marginBottom:'1.5rem' }}>
+            <span style={{ background:'linear-gradient(135deg,var(--teal),var(--purple))', borderRadius:99, padding:'2px 9px', fontSize:'.62rem', fontWeight:800, color:'#ffffff', textTransform:'uppercase', letterSpacing:'.08em' }}>Free</span>
             <span style={{ fontSize:'.78rem', color:'var(--t2)' }}>No credit card required</span>
           </div>
 
-          <h2 style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'clamp(1.5rem,3vw,2.1rem)', lineHeight:1.2, marginBottom:'1.5rem' }}>
+          <h2 style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'clamp(1.5rem,2vw,2.1rem)', lineHeight:1.2, marginBottom:'1.5rem' }}>
             Healthcare intelligence,<br/><span className="grad">at your fingertips</span>
           </h2>
 
           <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
             {perks.map(p => (
               <div key={p} style={{ display:'flex', alignItems:'flex-start', gap:11 }}>
-                <div style={{ width:20, height:20, borderRadius:'50%', background:'rgba(0,212,255,0.1)', border:'1px solid rgba(0,212,255,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:2 }}>
+                <div style={{ width:20, height:20, borderRadius:'50%', background:'rgba(16,185,129,0.1)', border:'1px solid rgba(16,185,129,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:2 }}>
                   <CheckCircle2 size={11} style={{ color:'var(--teal)' }} />
                 </div>
                 <span style={{ color:'var(--t2)', fontSize:'.88rem', lineHeight:1.6 }}>{p}</span>
@@ -102,13 +105,14 @@ export default function Auth() {
       </div>
 
       {/* ── Right panel — form ── */}
-      <div style={{
+      <div className="glass" style={{
+        width:450, height:580,
         display:'flex', alignItems:'center', justifyContent:'center',
-        padding:'3rem 2.5rem', position:'relative', overflow:'hidden',
-        background:'var(--bg)',
+        padding:'3.5rem 2.5rem', position:'relative', overflow:'hidden',
+        background:'#ffffff',
       }}>
-        <div className="orb" style={{ width:350, height:350, top:'10%', right:'-15%', background:'radial-gradient(circle,rgba(139,92,246,0.07),transparent 65%)' }} />
-        <div className="orb" style={{ width:300, height:300, bottom:'5%', left:'-10%', background:'radial-gradient(circle,rgba(0,212,255,0.05),transparent 65%)' }} />
+        <div className="orb" style={{ width:350, height:350, top:'10%', right:'-15%', background:'radial-gradient(circle,rgba(13,148,136,0.07),transparent 65%)' }} />
+        <div className="orb" style={{ width:300, height:300, bottom:'5%', left:'-10%', background:'radial-gradient(circle,rgba(16,185,129,0.05),transparent 65%)' }} />
 
         <motion.div
           key={mode}
@@ -116,24 +120,24 @@ export default function Auth() {
           animate={{ opacity:1, x:0 }}
           exit={{ opacity:0, x:-16 }}
           transition={{ duration:.28 }}
-          style={{ width:'100%', maxWidth:420, position:'relative', zIndex:1 }}
+          style={{ width:'100%', position:'relative', zIndex:1 }}
         >
           {/* Header */}
-          <div style={{ marginBottom:'2.5rem' }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:7, marginBottom:16, padding:'5px 14px', borderRadius:99, background:'rgba(139,92,246,0.08)', border:'1px solid rgba(139,92,246,0.18)' }}>
-              <Sparkles size={12} style={{ color:'#c4b5fd' }} />
-              <span style={{ fontSize:'.72rem', fontWeight:700, color:'#c4b5fd', textTransform:'uppercase', letterSpacing:'.08em' }}>
+          <div style={{ marginBottom:'2.25rem' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:7, marginBottom:14, padding:'5px 14px', borderRadius:99, background:'rgba(16,185,129,0.08)', border:'1px solid rgba(16,185,129,0.18)' }}>
+              <Sparkles size={12} style={{ color:'var(--teal)' }} />
+              <span style={{ fontSize:'.72rem', fontWeight:700, color:'var(--teal)', textTransform:'uppercase', letterSpacing:'.08em' }}>
                 {mode === 'login' ? 'Welcome back' : 'Get started free'}
               </span>
             </div>
-            <h1 style={{ fontFamily:'var(--f-display)', fontSize:'2rem', fontWeight:800, marginBottom:8, letterSpacing:'-.02em' }}>
+            <h1 style={{ fontFamily:'var(--f-display)', fontSize:'1.85rem', fontWeight:800, marginBottom:8, letterSpacing:'-.02em' }}>
               {mode === 'login' ? 'Sign in to Medi-Assist' : 'Create your account'}
             </h1>
-            <p style={{ color:'var(--t3)', fontSize:'.88rem' }}>
+            <p style={{ color:'var(--t3)', fontSize:'.85rem' }}>
               {mode === 'login' ? "Don't have an account? " : 'Already have one? '}
               <button
                 onClick={() => setMode(mode==='login'?'register':'login')}
-                style={{ background:'none', border:'none', color:'var(--teal)', fontWeight:600, cursor:'pointer', fontSize:'.88rem', transition:'var(--t)' }}
+                style={{ background:'none', border:'none', color:'var(--teal)', fontWeight:600, cursor:'pointer', fontSize:'.85rem', transition:'var(--t)' }}
                 onMouseEnter={e => e.currentTarget.style.color='var(--t1)'}
                 onMouseLeave={e => e.currentTarget.style.color='var(--teal)'}
               >
@@ -143,7 +147,7 @@ export default function Auth() {
           </div>
 
           {/* Form */}
-          <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:18 }}>
+          <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:14 }}>
             <AnimatePresence>
               {mode === 'register' && (
                 <motion.div key="name" initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }} style={{ overflow:'hidden' }}>
@@ -186,13 +190,13 @@ export default function Auth() {
             </button>
           </form>
 
-          <div style={{ margin:'1.75rem 0', display:'flex', alignItems:'center', gap:14 }}>
+          <div style={{ margin:'1.25rem 0', display:'flex', alignItems:'center', gap:14 }}>
             <div style={{ flex:1, height:1, background:'var(--border)' }} />
-            <span style={{ fontSize:'.7rem', color:'var(--t3)', letterSpacing:'.04em' }}>MEDI-ASSIST IS FREE</span>
+            <span style={{ fontSize:'.68rem', color:'var(--t3)', letterSpacing:'.04em' }}>MEDI-ASSIST IS FREE</span>
             <div style={{ flex:1, height:1, background:'var(--border)' }} />
           </div>
 
-          <p style={{ fontSize:'.72rem', color:'var(--t3)', textAlign:'center', lineHeight:1.7 }}>
+          <p style={{ fontSize:'.7rem', color:'var(--t3)', textAlign:'center', lineHeight:1.7 }}>
             By continuing you agree to our educational platform terms.<br/>
             Medi-Assist cannot replace professional medical diagnosis.
           </p>

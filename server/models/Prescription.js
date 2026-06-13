@@ -7,6 +7,8 @@ const prescriptionSchema = new mongoose.Schema(
     storedName:   { type: String }, // Optional during/after migration to Cloudinary
     fileType:     { type: String, required: true },
     note:         { type: String, default: "" },
+    category:     { type: String, enum: ["Prescription", "Lab Report", "Scan", "Medical Image", "Insurance", "Other"], default: "Other" },
+    description:  { type: String, default: "" },
     cloudinaryUrl: { type: String },
     cloudinaryPublicId: { type: String },
   },

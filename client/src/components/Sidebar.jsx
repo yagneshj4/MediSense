@@ -11,7 +11,6 @@ const nav = [
   { to:'/',          icon: Activity,        label:'Home'      },
   { to:'/predict',   icon: Brain,           label:'Diagnose'  },
   { to:'/chat',      icon: MessageSquare,   label:'MediBot'   },
-  { to:'/dashboard', icon: LayoutDashboard, label:'Dashboard' },
 ];
 
 export default function Navbar() {
@@ -19,7 +18,12 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const activeNav = [...nav];
+  if (isAuth) {
+    activeNav.push({ to: '/dashboard#vault', icon: Shield, label: 'Medical Vault' });
+  }
   if (isAuth && user?.role === 'admin') {
     activeNav.push({ to: '/admin', icon: Shield, label: 'Admin' });
   }
@@ -28,8 +32,8 @@ export default function Navbar() {
     <>
       <header style={{
         position:'sticky', top:0, zIndex:200,
-        background:'rgba(5,10,22,0.88)',
-        borderBottom:'1px solid rgba(255,255,255,0.06)',
+        background:'rgba(255, 255, 255, 0.9)',
+        borderBottom:'1px solid var(--border)',
         backdropFilter:'blur(40px)',
         WebkitBackdropFilter:'blur(40px)',
       }}>
@@ -49,9 +53,9 @@ export default function Navbar() {
               width:36, height:36, borderRadius:11,
               background:'linear-gradient(135deg,var(--teal),var(--purple))',
               display:'flex', alignItems:'center', justifyContent:'center',
-              boxShadow:'0 0 20px rgba(0,212,255,0.3)',
+              boxShadow:'0 0 20px rgba(16,185,129,0.25)',
             }}>
-              <Stethoscope size={18} color="#04090f" strokeWidth={2.5} />
+              <Stethoscope size={18} color="#ffffff" strokeWidth={2.5} />
             </div>
             <div>
               <div style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'.95rem', letterSpacing:'-.015em', color:'var(--t1)', lineHeight:1.1 }}>Medi-Assist</div>
@@ -67,8 +71,8 @@ export default function Navbar() {
                   display:'flex', alignItems:'center', gap:6,
                   padding:'7px 14px', borderRadius:10,
                   color: isActive ? 'var(--teal)' : 'var(--t3)',
-                  background: isActive ? 'rgba(0,212,255,0.1)' : 'transparent',
-                  border: `1px solid ${isActive ? 'rgba(0,212,255,0.2)' : 'transparent'}`,
+                  background: isActive ? '#ffffff' : 'transparent',
+                  border: `1px solid ${isActive ? 'var(--teal)' : 'transparent'}`,
                   fontWeight: isActive ? 600 : 400,
                   fontSize:'.84rem',
                   whiteSpace:'nowrap',
@@ -77,13 +81,13 @@ export default function Navbar() {
                   position:'relative',
                 })}
                 onMouseEnter={e => {
-                  if (!e.currentTarget.style.background.includes('0.1')) {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  if (!e.currentTarget.style.borderColor.includes('var(--teal)')) {
+                    e.currentTarget.style.background = 'rgba(16,185,129,0.04)';
                     e.currentTarget.style.color = 'var(--t1)';
                   }
                 }}
                 onMouseLeave={e => {
-                  if (!e.currentTarget.style.background.includes('0.1')) {
+                  if (!e.currentTarget.style.borderColor.includes('var(--teal)')) {
                     e.currentTarget.style.background = 'transparent';
                     e.currentTarget.style.color = 'var(--t3)';
                   }
@@ -98,19 +102,56 @@ export default function Navbar() {
           {/* ── Right: User / Sign In ── */}
           <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
             {isAuth ? (
-              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                <div style={{
-                  display:'flex', alignItems:'center', gap:9,
-                  padding:'5px 5px 5px 10px',
-                  borderRadius:99,
-                  background:'rgba(255,255,255,0.04)',
-                  border:'1px solid rgba(255,255,255,0.08)',
-                }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                {user?.role === 'admin' && (
+                  <NavLink 
+                    to="/admin"
+                    style={{
+                      display:'flex', alignItems:'center', gap:6,
+                      padding:'6px 14px', borderRadius:99,
+                      background:'rgba(16, 185, 129, 0.06)',
+                      border:'1px solid rgba(16, 185, 129, 0.18)',
+                      color:'var(--purple)',
+                      fontWeight:600,
+                      fontSize:'.78rem',
+                      transition:'all 0.18s ease',
+                      textDecoration:'none',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'rgba(16, 185, 129, 0.12)';
+                      e.currentTarget.style.color = 'var(--teal)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'rgba(16, 185, 129, 0.06)';
+                      e.currentTarget.style.color = 'var(--purple)';
+                    }}
+                  >
+                    <Shield size={13} />
+                    <span>Admin</span>
+                  </NavLink>
+                )}
+
+                <NavLink 
+                  to="/dashboard"
+                  style={{
+                    display:'flex', alignItems:'center', gap:9,
+                    padding:'5px 12px',
+                    borderRadius:99,
+                    background:'#ffffff',
+                    border:'1px solid var(--border)',
+                    cursor:'pointer',
+                    userSelect:'none',
+                    textDecoration:'none',
+                    transition:'all 0.2s ease',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background='var(--hover-bg)'}
+                  onMouseLeave={e => e.currentTarget.style.background='#ffffff'}
+                >
                   <div style={{
                     width:28, height:28, borderRadius:'50%',
                     background:'linear-gradient(135deg,var(--teal),var(--purple))',
                     display:'flex', alignItems:'center', justifyContent:'center',
-                    flexShrink:0, fontSize:'.72rem', fontWeight:700, color:'#04090f',
+                    flexShrink:0, fontSize:'.72rem', fontWeight:700, color:'#ffffff',
                   }}>
                     {user?.name?.[0]?.toUpperCase() || 'U'}
                   </div>
@@ -120,31 +161,40 @@ export default function Navbar() {
                       overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:100,
                     }}>{user?.name}</div>
                   </div>
-                  <button
-                    onClick={() => { logout(); navigate('/'); }}
-                    title="Sign out"
-                    style={{
-                      background:'rgba(239,68,68,0.1)',
-                      border:'1px solid rgba(239,68,68,0.15)',
-                      borderRadius:99, padding:'6px 10px',
-                      color:'var(--red)', display:'flex', alignItems:'center', gap:5,
-                      flexShrink:0, transition:'var(--t)', fontSize:'.72rem', fontWeight:600,
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.2)'}
-                    onMouseLeave={e => e.currentTarget.style.background='rgba(239,68,68,0.1)'}
-                  >
-                    <LogOut size={12}/> <span style={{ lineHeight:1 }}>Out</span>
-                  </button>
-                </div>
+                </NavLink>
+
+                <button 
+                  onClick={() => { logout(); navigate('/'); }}
+                  style={{
+                    display:'flex', alignItems:'center', gap:6,
+                    padding:'6px 14px', borderRadius:99,
+                    background:'transparent',
+                    border:'1px solid rgba(225, 29, 72, 0.25)',
+                    color:'var(--red)',
+                    fontWeight:600,
+                    fontSize:'.78rem',
+                    cursor:'pointer',
+                    transition:'all 0.18s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = 'rgba(225, 29, 72, 0.08)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <LogOut size={13} />
+                  <span>Sign Out</span>
+                </button>
               </div>
             ) : (
               <NavLink to="/auth" style={{
                 display:'flex', alignItems:'center', gap:7,
                 padding:'8px 18px', borderRadius:99,
                 background:'linear-gradient(135deg,var(--teal),var(--purple))',
-                color:'#04090f', fontWeight:700, fontSize:'.82rem',
+                color:'#ffffff', fontWeight:700, fontSize:'.82rem',
                 whiteSpace:'nowrap',
-                boxShadow:'0 4px 16px rgba(0,212,255,0.25)',
+                boxShadow:'0 4px 16px rgba(16,185,129,0.2)',
                 transition:'var(--t)',
               }}
               onMouseEnter={e => e.currentTarget.style.transform='translateY(-1px)'}
@@ -190,7 +240,7 @@ export default function Navbar() {
                       display:'flex', alignItems:'center', gap:10,
                       padding:'11px 14px', borderRadius:10,
                       color: isActive ? 'var(--teal)' : 'var(--t2)',
-                      background: isActive ? 'rgba(0,212,255,0.08)' : 'transparent',
+                      background: isActive ? 'rgba(16,185,129,0.08)' : 'transparent',
                       fontWeight: isActive ? 600 : 400,
                       fontSize:'.88rem',
                     })}

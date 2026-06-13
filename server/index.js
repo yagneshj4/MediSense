@@ -127,7 +127,7 @@ async function startServer() {
 
   // Validate optional integrations and log warning
   if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "your_gemini_api_key" || process.env.GEMINI_API_KEY === "your_google_ai_studio_api_key") {
-    logger.warn("⚠️  WARNING: GEMINI_API_KEY is missing or using placeholder. Gemini AI features will be disabled; chatbot will fall back to rule-based responses.");
+    logger.warn("⚠️  WARNING: GEMINI_API_KEY is missing or using placeholder. Gemini AI features will be disabled and chatbot requests will fail.");
   }
 
   try {

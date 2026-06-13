@@ -36,22 +36,31 @@ function ConfidenceBar({ value }) {
 function Panel({ icon: Icon, title, children, accent='var(--teal)', defaultOpen=true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="glass" style={{ overflow:'hidden', marginBottom:10 }}>
+    <div className="glass fade-up" style={{ 
+      overflow:'hidden', 
+      marginBottom:12,
+      borderLeft:`4px solid ${accent}`,
+      background:'var(--bg-2)',
+      boxShadow:'var(--sh-sm)',
+      borderTop:'1px solid var(--border)',
+      borderRight:'1px solid var(--border)',
+      borderBottom:'1px solid var(--border)',
+    }}>
       <button onClick={() => setOpen(!open)} style={{
-        width:'100%', display:'flex', alignItems:'center', gap:10,
-        padding:'13px 18px', background:'none', border:'none',
-        color:'var(--t1)', fontWeight:600, fontSize:'.85rem', cursor:'pointer',
+        width:'100%', display:'flex', alignItems:'center', gap:12,
+        padding:'14px 20px', background:'none', border:'none',
+        color:'var(--t1)', fontWeight:700, fontSize:'.9rem', cursor:'pointer',
       }}>
-        <div style={{ width:30, height:30, borderRadius:9, background:`${accent}12`, border:`1px solid ${accent}20`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-          <Icon size={14} style={{ color:accent }} />
+        <div style={{ width:32, height:32, borderRadius:8, background:`${accent}12`, border:`1px solid ${accent}25`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <Icon size={15} style={{ color:accent }} />
         </div>
-        {title}
-        <ChevronDown size={14} style={{ marginLeft:'auto', color:'var(--t3)', transform:open?'rotate(180deg)':'none', transition:'var(--t)' }} />
+        <span style={{ fontFamily:'var(--f-display)', letterSpacing:'-0.015em' }}>{title}</span>
+        <ChevronDown size={15} style={{ marginLeft:'auto', color:'var(--t3)', transform:open?'rotate(180deg)':'none', transition:'var(--t)' }} />
       </button>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height:0 }} animate={{ height:'auto' }} exit={{ height:0 }} style={{ overflow:'hidden' }}>
-            <div style={{ padding:'2px 18px 18px', borderTop:'1px solid var(--border)' }}>{children}</div>
+            <div style={{ padding:'0 20px 20px', borderTop:'1px solid var(--border)' }}>{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -122,19 +131,64 @@ export default function Predict() {
         </p>
       </motion.div>
 
-      {/* ── Symptom Input ── */}
-      <motion.div initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0, transition:{ delay:.06 } }} className="glass" style={{ padding:'2rem', marginBottom:'1.5rem' }}>
-
+      {/* ── Symptom Input Card ── */}
+      <motion.div 
+        initial={{ opacity:0, y:16 }} 
+        animate={{ opacity:1, y:0, transition:{ delay:.06 } }} 
+        className="glass" 
+        style={{ 
+          padding:'2.25rem', 
+          marginBottom:'1.5rem',
+          boxShadow:'var(--sh-md)',
+          border:'1px solid var(--border-2)'
+        }}
+      >
         {/* Selected chips */}
         <AnimatePresence>
           {sel.length > 0 && (
-            <motion.div initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }}
-              style={{ display:'flex', flexWrap:'wrap', gap:7, marginBottom:'1.25rem' }}>
+            <motion.div 
+              initial={{ opacity:0, height:0 }} 
+              animate={{ opacity:1, height:'auto' }} 
+              exit={{ opacity:0, height:0 }}
+              style={{ display:'flex', flexWrap:'wrap', gap:8, marginBottom:'1.5rem' }}
+            >
               {sel.map(s => (
-                <motion.span key={s} initial={{ scale:.8, opacity:0 }} animate={{ scale:1, opacity:1 }} exit={{ scale:.8, opacity:0 }}
-                  className="chip chip-teal" style={{ fontWeight:500 }}>
+                <motion.span 
+                  key={s} 
+                  initial={{ scale:.85, opacity:0 }} 
+                  animate={{ scale:1, opacity:1 }} 
+                  exit={{ scale:.85, opacity:0 }}
+                  className="chip chip-teal" 
+                  style={{ 
+                    fontWeight:600, 
+                    boxShadow:'var(--sh-xs)',
+                    padding:'6px 14px',
+                    display:'flex',
+                    alignItems:'center',
+                    gap:6,
+                    border:'1px solid rgba(16, 185, 129, 0.25)'
+                  }}
+                >
                   {s}
-                  <button onClick={() => rem(s)} style={{ background:'none', border:'none', color:'inherit', display:'flex', padding:0, cursor:'pointer', opacity:.7 }}><X size={11}/></button>
+                  <button 
+                    onClick={() => rem(s)} 
+                    style={{ 
+                      background:'rgba(16, 185, 129, 0.15)', 
+                      border:'none', 
+                      color:'var(--teal)', 
+                      display:'flex', 
+                      alignItems:'center',
+                      justifyContent:'center',
+                      padding:2, 
+                      borderRadius:'50%',
+                      cursor:'pointer', 
+                      transition:'var(--t)' 
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background='var(--red-dim)'}
+                    onMouseLeave={e => e.currentTarget.style.background='rgba(16, 185, 129, 0.15)'}
+                  >
+                    <X size={10} style={{ strokeWidth: 2.5 }} />
+                  </button>
                 </motion.span>
               ))}
             </motion.div>
@@ -142,14 +196,41 @@ export default function Predict() {
         </AnimatePresence>
 
         {/* Search box */}
-        <div style={{ position:'relative', marginBottom:'1.25rem' }}>
-          <Search size={15} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--t3)' }} />
-          <input className="inp" style={{ paddingLeft:42 }} value={q} onChange={e => setQ(e.target.value)}
-            placeholder={symLoad ? 'Loading 132 symptoms…' : 'Search symptoms (e.g. headache, fever)…'}
-            disabled={symLoad} />
+        <div style={{ position:'relative', marginBottom:'1.5rem' }}>
+          <Search size={16} style={{ position:'absolute', left:16, top:'50%', transform:'translateY(-50%)', color:'var(--teal)', opacity:0.8 }} />
+          <input 
+            className="inp" 
+            style={{ 
+              paddingLeft:46, 
+              paddingRight:40, 
+              height:48, 
+              fontSize:'.95rem',
+              boxShadow:'var(--sh-xs)'
+            }} 
+            value={q} 
+            onChange={e => setQ(e.target.value)}
+            placeholder={symLoad ? 'Loading symptoms database…' : 'Type to search symptoms (e.g. headache, fever, cough)…'}
+            disabled={symLoad} 
+          />
           {q && (
-            <button onClick={() => setQ('')} style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', color:'var(--t3)', display:'flex', cursor:'pointer' }}>
-              <X size={14}/>
+            <button 
+              onClick={() => setQ('')} 
+              style={{ 
+                position:'absolute', 
+                right:16, 
+                top:'50%', 
+                transform:'translateY(-50%)', 
+                background:'none', 
+                border:'none', 
+                color:'var(--t3)', 
+                display:'flex', 
+                cursor:'pointer',
+                opacity:0.7
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity=1}
+              onMouseLeave={e => e.currentTarget.style.opacity=0.7}
+            >
+              <X size={16}/>
             </button>
           )}
         </div>
@@ -157,15 +238,52 @@ export default function Predict() {
         {/* Dropdown suggestions */}
         <AnimatePresence>
           {q && filtered.length > 0 && (
-            <motion.div initial={{ opacity:0, y:-6, scaleY:.95 }} animate={{ opacity:1, y:0, scaleY:1 }} exit={{ opacity:0, y:-6 }}
-              style={{ maxHeight:220, overflowY:'auto', background:'rgba(5,10,22,0.98)', border:'1px solid var(--border)', borderRadius:'var(--r-md)', padding:6, marginBottom:'1.25rem', boxShadow:'var(--sh-lg)' }}>
+            <motion.div 
+              initial={{ opacity:0, y:-6, scaleY:.95 }} 
+              animate={{ opacity:1, y:0, scaleY:1 }} 
+              exit={{ opacity:0, y:-6 }}
+              style={{ 
+                maxHeight:240, 
+                overflowY:'auto', 
+                background:'var(--card-dropdown)', 
+                border:'1px solid var(--border-2)', 
+                borderRadius:'var(--r-md)', 
+                padding:6, 
+                marginBottom:'1.5rem', 
+                boxShadow:'var(--sh-lg)',
+                zIndex:100,
+                position:'relative'
+              }}
+            >
               {filtered.slice(0,24).map(s => (
-                <button key={s} onClick={() => add(s)}
-                  style={{ width:'100%', textAlign:'left', padding:'9px 13px', background:'none', border:'none', color:'var(--t2)', fontSize:'.85rem', borderRadius:9, cursor:'pointer', transition:'var(--t)', display:'flex', alignItems:'center', gap:8 }}
-                  onMouseEnter={e => { e.currentTarget.style.background='rgba(0,212,255,0.08)'; e.currentTarget.style.color='var(--teal)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color=''; }}
+                <button 
+                  key={s} 
+                  onClick={() => add(s)}
+                  style={{ 
+                    width:'100%', 
+                    textAlign:'left', 
+                    padding:'10px 14px', 
+                    background:'none', 
+                    border:'none', 
+                    color:'var(--t2)', 
+                    fontSize:'.88rem', 
+                    borderRadius:9, 
+                    cursor:'pointer', 
+                    transition:'var(--t)', 
+                    display:'flex', 
+                    alignItems:'center', 
+                    gap:8 
+                  }}
+                  onMouseEnter={e => { 
+                    e.currentTarget.style.background='var(--teal-dim)'; 
+                    e.currentTarget.style.color='var(--teal)'; 
+                  }}
+                  onMouseLeave={e => { 
+                    e.currentTarget.style.background=''; 
+                    e.currentTarget.style.color=''; 
+                  }}
                 >
-                  <Plus size={12} style={{ opacity:.6 }}/> {s}
+                  <Plus size={14} style={{ opacity:.6, color:'var(--teal)' }}/> {s}
                 </button>
               ))}
             </motion.div>
@@ -175,15 +293,40 @@ export default function Predict() {
         {/* Quick select chips */}
         {!q && (
           <div>
-            <p style={{ fontSize:'.7rem', color:'var(--t3)', marginBottom:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em' }}>Quick Select</p>
-            <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
+            <p style={{ fontSize:'.75rem', color:'var(--t3)', marginBottom:12, fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', display:'flex', alignItems:'center', gap:5 }}>
+              <Activity size={12} style={{ color:'var(--teal)' }} /> Quick Select Common Symptoms
+            </p>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
               {QUICK.filter(s => !sel.includes(s)).map(s => (
-                <button key={s} onClick={() => add(s)}
-                  style={{ display:'flex', alignItems:'center', gap:5, padding:'5px 13px', borderRadius:99, background:'transparent', border:'1px dashed rgba(139,92,246,0.3)', color:'#b4a4f8', fontSize:'.78rem', fontWeight:500, cursor:'pointer', transition:'var(--t)' }}
-                  onMouseEnter={e => { e.currentTarget.style.background='rgba(139,92,246,0.1)'; e.currentTarget.style.borderColor='rgba(139,92,246,0.5)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='rgba(139,92,246,0.3)'; }}
+                <button 
+                  key={s} 
+                  onClick={() => add(s)}
+                  style={{ 
+                    display:'flex', 
+                    alignItems:'center', 
+                    gap:6, 
+                    padding:'6px 14px', 
+                    borderRadius:99, 
+                    background:'var(--teal-dim)', 
+                    border:'1px solid rgba(16,185,129,0.18)', 
+                    color:'var(--purple)', 
+                    fontSize:'.8rem', 
+                    fontWeight:600, 
+                    cursor:'pointer', 
+                    transition:'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)' 
+                  }}
+                  onMouseEnter={e => { 
+                    e.currentTarget.style.background='rgba(16,185,129,0.12)'; 
+                    e.currentTarget.style.borderColor='var(--teal)';
+                    e.currentTarget.style.transform='scale(1.05)';
+                  }}
+                  onMouseLeave={e => { 
+                    e.currentTarget.style.background='var(--teal-dim)'; 
+                    e.currentTarget.style.borderColor='rgba(16,185,129,0.18)'; 
+                    e.currentTarget.style.transform='none';
+                  }}
                 >
-                  <Plus size={10}/> {s}
+                  <Plus size={11} style={{ color:'var(--teal)' }}/> {s}
                 </button>
               ))}
             </div>
@@ -191,26 +334,27 @@ export default function Predict() {
         )}
 
         {/* Action row */}
-        <div style={{ display:'flex', gap:10, marginTop:'1.75rem', alignItems:'center', flexWrap:'wrap' }}>
-          <button onClick={predict} className="btn btn-primary" disabled={loading || !sel.length} style={{ gap:8 }}>
+        <div style={{ display:'flex', gap:10, marginTop:'2rem', alignItems:'center', flexWrap:'wrap', borderTop:'1px solid var(--border)', paddingTop:'1.5rem' }}>
+          <button onClick={predict} className="btn btn-primary" disabled={loading || !sel.length} style={{ gap:8, height:42, padding:'0 24px' }}>
             {loading ? <Loader2 size={16} style={{ animation:'_spin .8s linear infinite' }}/> : <Brain size={16}/>}
-            {loading ? 'Analyzing…' : 'Run AI Diagnosis'}
+            {loading ? 'Analyzing Symptoms…' : 'Run AI Diagnosis'}
           </button>
           {sel.length > 0 && (
-            <button onClick={reset} className="btn btn-ghost btn-sm"><X size={13}/> Clear all</button>
+            <button onClick={reset} className="btn btn-ghost btn-sm" style={{ height:36 }}><X size={13}/> Clear all</button>
           )}
           {sel.length > 0 && (
-            <span style={{ color:'var(--t3)', fontSize:'.78rem', marginLeft:4 }}>
+            <span style={{ color:'var(--t2)', fontSize:'.8rem', fontWeight:500, marginLeft:4 }}>
               {sel.length} symptom{sel.length>1?'s':''} selected
             </span>
           )}
           {!isAuth && (
-            <span style={{ color:'var(--t3)', fontSize:'.75rem', marginLeft:'auto' }}>
+            <span style={{ color:'var(--t3)', fontSize:'.78rem', marginLeft:'auto', background:'var(--bg-3)', padding:'4px 12px', borderRadius:6 }}>
               Sign in to save diagnosis history
             </span>
           )}
         </div>
       </motion.div>
+
 
       {/* ── Results ── */}
       <AnimatePresence>
@@ -221,54 +365,94 @@ export default function Predict() {
             {(() => {
               const sc = sevColor(res.severity);
               return (
-                <div className="glass" style={{ padding:'2.25rem', marginBottom:'1rem', borderColor:'rgba(0,212,255,0.15)' }}>
-                  <div style={{ display:'flex', alignItems:'flex-start', gap:'1.75rem', flexWrap:'wrap', marginBottom:'1.75rem' }}>
-                    <div style={{ flex:1, minWidth:200 }}>
-                      <span className="badge badge-teal" style={{ marginBottom:12, display:'inline-flex' }}>Primary Diagnosis</span>
-                      <h2 style={{ fontFamily:'var(--f-display)', fontSize:clamp('1.6rem','3.5vw','2.2rem'), fontWeight:800, lineHeight:1.1, marginBottom:14 }}>{res.disease}</h2>
-                      <span style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'5px 14px', borderRadius:99, background:sc.bg, border:`1px solid ${sc.border}`, color:sc.text, fontSize:'.78rem', fontWeight:700 }}>
-                        <span style={{ width:7, height:7, borderRadius:'50%', background:sc.text, display:'inline-block' }}/>
-                        {sc.label} Severity
+                <div 
+                  className="glass fade-up" 
+                  style={{ 
+                    padding:'2.5rem', 
+                    marginBottom:'1.5rem', 
+                    boxShadow:'var(--sh-md)',
+                    border:'1px solid var(--border-2)',
+                    background:'var(--bg-2)'
+                  }}
+                >
+                  <div style={{ display:'flex', alignItems:'flex-start', gap:'2rem', flexWrap:'wrap', marginBottom:'2rem' }}>
+                    <div style={{ flex:1, minWidth:240 }}>
+                      <span className="badge badge-teal" style={{ marginBottom:14, display:'inline-flex' }}>Primary Diagnosis</span>
+                      <h2 style={{ 
+                        fontFamily:'var(--f-display)', 
+                        fontSize:clamp('1.8rem','4vw','2.4rem'), 
+                        fontWeight:800, 
+                        lineHeight:1.15, 
+                        marginBottom:16,
+                        color:'var(--t1)'
+                      }}>{res.disease}</h2>
+                      <span style={{ 
+                        display:'inline-flex', 
+                        alignItems:'center', 
+                        gap:8, 
+                        padding:'6px 16px', 
+                        borderRadius:99, 
+                        background:sc.bg, 
+                        border:`1px solid ${sc.border}`, 
+                        color:sc.text, 
+                        fontSize:'.8rem', 
+                        fontWeight:700 
+                      }}>
+                        <span style={{ width:8, height:8, borderRadius:'50%', background:sc.text, display:'inline-block' }}/>
+                        {sc.label} Severity Level
                       </span>
                     </div>
 
                     {/* Confidence donut */}
-                    <div style={{ textAlign:'center', flexShrink:0 }}>
+                    <div style={{ textAlign:'center', flexShrink:0, padding:'8px 16px', background:'var(--bg-3)', borderRadius:16, border:'1px solid var(--border)' }}>
                       <div style={{
-                        width:84, height:84, borderRadius:'50%',
-                        background:`conic-gradient(var(--teal) ${res.confidence * 3.6}deg, rgba(255,255,255,0.05) 0deg)`,
+                        width:88, height:88, borderRadius:'50%',
+                        background:`conic-gradient(var(--teal) ${res.confidence * 3.6}deg, rgba(16, 185, 129, 0.08) 0deg)`,
                         display:'flex', alignItems:'center', justifyContent:'center',
-                        margin:'0 auto 8px',
-                        boxShadow:'0 0 0 3px rgba(0,212,255,0.08)',
+                        margin:'0 auto 10px',
+                        boxShadow:'0 0 0 3px rgba(16, 185, 129, 0.12)',
                       }}>
-                        <div style={{ width:64, height:64, borderRadius:'50%', background:'var(--bg)', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column' }}>
-                          <span style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.2rem', color:'var(--teal)', lineHeight:1 }}>{res.confidence}%</span>
+                        <div style={{ 
+                          width:66, 
+                          height:66, 
+                          borderRadius:'50%', 
+                          background:'var(--bg-2)', 
+                          display:'flex', 
+                          alignItems:'center', 
+                          justifyContent:'center', 
+                          flexDirection:'column' 
+                        }}>
+                          <span style={{ fontFamily:'var(--f-display)', fontWeight:800, fontSize:'1.3rem', color:'var(--teal)', lineHeight:1 }}>{res.confidence}%</span>
                         </div>
                       </div>
-                      <span style={{ fontSize:'.68rem', color:'var(--t3)', textTransform:'uppercase', letterSpacing:'.06em' }}>Confidence</span>
+                      <span style={{ fontSize:'.7rem', color:'var(--t2)', fontWeight:700, textTransform:'uppercase', letterSpacing:'.06em' }}>Match Probability</span>
                     </div>
                   </div>
 
-                  <ConfidenceBar value={res.confidence} />
-                  {res.confidence_note && (
-                    <p style={{ color:'var(--t3)', fontSize:'.78rem', marginTop:12, fontStyle:'italic', lineHeight:1.7 }}>{res.confidence_note}</p>
-                  )}
+                  <div style={{ background:'var(--bg-3)', padding:'1.25rem', borderRadius:12, border:'1px solid var(--border)', marginBottom:'2rem' }}>
+                    <ConfidenceBar value={res.confidence} />
+                    {res.confidence_note && (
+                      <p style={{ color:'var(--t2)', fontSize:'.82rem', marginTop:12, fontStyle:'italic', lineHeight:1.7 }}>
+                        Note: {res.confidence_note}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Alternative diagnoses */}
                   {res.top3?.length > 1 && (
-                    <div style={{ marginTop:'1.75rem' }}>
-                      <p style={{ fontSize:'.7rem', color:'var(--t3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
-                        <TrendingUp size={12}/> Other Possibilities
+                    <div>
+                      <p style={{ fontSize:'.75rem', color:'var(--t3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', marginBottom:14, display:'flex', alignItems:'center', gap:6 }}>
+                        <TrendingUp size={14} style={{ color:'var(--purple)' }}/> Other Possibilities Considered
                       </p>
-                      <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                      <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                         {res.top3.slice(1).map((d,i) => (
-                          <div key={i} className="table-row">
-                            <span style={{ color:'var(--t3)', fontSize:'.72rem', width:22, fontFamily:'var(--f-display)', fontWeight:700 }}>#{i+2}</span>
-                            <span style={{ flex:1, fontSize:'.88rem', fontWeight:500 }}>{d.disease}</span>
-                            <div style={{ width:80 }}>
-                              <div className="progress"><div className="progress-fill" style={{ width:`${d.confidence}%`, background:'var(--purple)' }} /></div>
+                          <div key={i} className="table-row" style={{ background:'var(--bg-3)', border:'1px solid var(--border)' }}>
+                            <span style={{ color:'var(--teal)', fontSize:'.78rem', width:24, fontFamily:'var(--f-display)', fontWeight:800 }}>#{i+2}</span>
+                            <span style={{ flex:1, fontSize:'.88rem', fontWeight:600, color:'var(--t1)' }}>{d.disease}</span>
+                            <div style={{ width:100 }}>
+                              <div className="progress" style={{ background:'rgba(0, 0, 0, 0.05)', height:6 }}><div className="progress-fill" style={{ width:`${d.confidence}%`, background:'var(--purple)' }} /></div>
                             </div>
-                            <span style={{ color:'#c4b5fd', fontWeight:700, fontSize:'.82rem', width:42, textAlign:'right' }}>{d.confidence}%</span>
+                            <span style={{ color:'var(--purple)', fontWeight:700, fontSize:'.85rem', width:48, textAlign:'right' }}>{d.confidence}%</span>
                           </div>
                         ))}
                       </div>
@@ -280,17 +464,32 @@ export default function Predict() {
 
             {/* Info panels */}
             {res.description && (
-              <Panel icon={Activity} title="About This Condition">
-                <p style={{ color:'var(--t2)', lineHeight:1.9, fontSize:'.88rem', paddingTop:14 }}>{res.description}</p>
+              <Panel icon={Activity} title="About This Condition" accent="var(--teal)">
+                <p style={{ color:'var(--t2)', lineHeight:1.9, fontSize:'.92rem', paddingTop:14, fontWeight:500 }}>{res.description}</p>
               </Panel>
             )}
             {res.precautions?.filter(Boolean).length > 0 && (
               <Panel icon={ShieldCheck} title="Clinical Precautions" accent="var(--green)">
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(210px,1fr))', gap:8, paddingTop:14 }}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:10, paddingTop:14 }}>
                   {res.precautions.filter(Boolean).map((p,i) => (
-                    <div key={i} style={{ display:'flex', gap:9, alignItems:'flex-start', padding:'11px 14px', background:'rgba(16,185,129,0.05)', borderRadius:11, border:'1px solid rgba(16,185,129,0.14)' }}>
-                      <ShieldCheck size={13} style={{ color:'var(--green)', flexShrink:0, marginTop:2 }} />
-                      <span style={{ color:'var(--t2)', fontSize:'.83rem', lineHeight:1.65 }}>{p}</span>
+                    <div 
+                      key={i} 
+                      style={{ 
+                        display:'flex', 
+                        gap:10, 
+                        alignItems:'flex-start', 
+                        padding:'12px 16px', 
+                        background:'var(--bg-3)', 
+                        borderRadius:12, 
+                        border:'1px solid var(--border)',
+                        boxShadow:'var(--sh-xs)',
+                        transition:'all 0.2s ease'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(16,185,129,0.3)'; e.currentTarget.style.transform='translateY(-2px)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none'; }}
+                    >
+                      <ShieldCheck size={14} style={{ color:'var(--green)', flexShrink:0, marginTop:3 }} />
+                      <span style={{ color:'var(--t1)', fontSize:'.85rem', lineHeight:1.6, fontWeight:600 }}>{p}</span>
                     </div>
                   ))}
                 </div>
@@ -299,39 +498,79 @@ export default function Predict() {
             {res.medication?.filter(Boolean).length > 0 && (
               <Panel icon={Pill} title="Suggested Medications" accent="var(--purple)" defaultOpen={false}>
                 <div style={{ paddingTop:14 }}>
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:7, marginBottom:12 }}>
-                    {res.medication.filter(Boolean).map((m,i) => <span key={i} className="chip chip-purple">{m}</span>)}
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginBottom:16 }}>
+                    {res.medication.filter(Boolean).map((m,i) => (
+                      <span 
+                        key={i} 
+                        className="chip chip-purple" 
+                        style={{ 
+                          fontWeight:600, 
+                          padding:'6px 14px', 
+                          border:'1px solid rgba(13, 148, 136, 0.25)',
+                          boxShadow:'var(--sh-xs)'
+                        }}
+                      >
+                        {m}
+                      </span>
+                    ))}
                   </div>
-                  <div style={{ display:'flex', gap:8, alignItems:'flex-start', padding:'10px 14px', background:'rgba(245,158,11,0.06)', borderRadius:10, border:'1px solid rgba(245,158,11,0.18)' }}>
-                    <AlertTriangle size={13} style={{ color:'var(--orange)', flexShrink:0, marginTop:1 }} />
-                    <p style={{ fontSize:'.75rem', color:'var(--orange)' }}>Always consult a licensed physician before taking any medication.</p>
+                  <div style={{ display:'flex', gap:10, alignItems:'flex-start', padding:'12px 16px', background:'var(--orange-dim)', borderRadius:12, border:'1px solid rgba(217,119,6,0.18)' }}>
+                    <AlertTriangle size={15} style={{ color:'var(--orange)', flexShrink:0, marginTop:2 }} />
+                    <p style={{ fontSize:'.8rem', color:'var(--orange)', fontWeight:600, lineHeight:1.5 }}>Always consult a licensed healthcare professional before taking any medication.</p>
                   </div>
                 </div>
               </Panel>
             )}
             {res.diet?.filter(Boolean).length > 0 && (
               <Panel icon={Salad} title="Recommended Diet" accent="var(--green)" defaultOpen={false}>
-                <div style={{ display:'flex', flexWrap:'wrap', gap:7, paddingTop:14 }}>
-                  {res.diet.filter(Boolean).map((d,i) => <span key={i} className="chip chip-green">{d}</span>)}
+                <div style={{ display:'flex', flexWrap:'wrap', gap:8, paddingTop:14 }}>
+                  {res.diet.filter(Boolean).map((d,i) => (
+                    <span 
+                      key={i} 
+                      className="chip chip-green" 
+                      style={{ 
+                        fontWeight:600, 
+                        padding:'6px 14px', 
+                        border:'1px solid rgba(5, 150, 105, 0.25)',
+                        boxShadow:'var(--sh-xs)'
+                      }}
+                    >
+                      {d}
+                    </span>
+                  ))}
                 </div>
               </Panel>
             )}
             {res.workout?.filter(Boolean).length > 0 && (
               <Panel icon={Dumbbell} title="Exercise & Recovery" accent="var(--orange)" defaultOpen={false}>
-                <div style={{ display:'flex', flexDirection:'column', gap:8, paddingTop:14 }}>
+                <div style={{ display:'flex', flexDirection:'column', gap:10, paddingTop:14 }}>
                   {res.workout.filter(Boolean).map((w,i) => (
-                    <div key={i} style={{ display:'flex', gap:10, alignItems:'flex-start', padding:'10px 14px', background:'rgba(245,158,11,0.05)', borderRadius:11, border:'1px solid rgba(245,158,11,0.12)' }}>
-                      <ArrowRight size={13} style={{ color:'var(--orange)', flexShrink:0, marginTop:2 }} />
-                      <span style={{ color:'var(--t2)', fontSize:'.85rem' }}>{w}</span>
+                    <div 
+                      key={i} 
+                      style={{ 
+                        display:'flex', 
+                        gap:12, 
+                        alignItems:'flex-start', 
+                        padding:'12px 16px', 
+                        background:'var(--bg-3)', 
+                        borderRadius:12, 
+                        border:'1px solid var(--border)',
+                        transition:'all 0.2s ease'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(217,119,6,0.3)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; }}
+                    >
+                      <ArrowRight size={14} style={{ color:'var(--orange)', flexShrink:0, marginTop:4 }} />
+                      <span style={{ color:'var(--t1)', fontSize:'.88rem', fontWeight:600 }}>{w}</span>
                     </div>
                   ))}
                 </div>
               </Panel>
             )}
             {res.unrecognized?.length > 0 && (
-              <div style={{ padding:'12px 16px', background:'rgba(245,158,11,0.06)', border:'1px solid rgba(245,158,11,0.18)', borderRadius:'var(--r-md)', marginTop:8, display:'flex', gap:10, alignItems:'flex-start' }}>
-                <AlertTriangle size={15} style={{ color:'var(--orange)', flexShrink:0, marginTop:1 }} />
-                <p style={{ color:'var(--orange)', fontSize:'.8rem' }}>Unrecognized terms: {res.unrecognized.join(', ')}</p>
+              <div style={{ padding:'14px 18px', background:'var(--orange-dim)', border:'1px solid rgba(217,119,6,0.18)', borderRadius:'var(--r-md)', marginTop:14, display:'flex', gap:10, alignItems:'flex-start' }}>
+                <AlertTriangle size={16} style={{ color:'var(--orange)', flexShrink:0, marginTop:2 }} />
+                <p style={{ color:'var(--orange)', fontSize:'.85rem', fontWeight:600 }}>Unrecognized terms: {res.unrecognized.join(', ')}</p>
               </div>
             )}
           </motion.div>

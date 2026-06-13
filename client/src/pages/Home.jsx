@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Brain, Activity, Shield, ArrowRight, Zap, ChevronRight,
   Sparkles, HeartPulse, FlaskConical, MessageCircle,
-  CheckCircle, Star, Heart, TrendingUp, Users, Award,
+  CheckCircle, Heart, TrendingUp, Users, Award,
   Stethoscope,
 } from 'lucide-react';
 
@@ -14,7 +14,7 @@ const features = [
   { icon:Brain,     grad:'linear-gradient(135deg,#00d4ff,#6366f1)', tag:'ML Powered',   title:'AI Disease Prediction',   desc:'SVM classifier analyzes 132 symptoms across 41 conditions, returning top-3 differential diagnoses with confidence scores and evidence-based care plans.', stats:['41 diseases','132 symptoms','~99% accuracy'], color:'var(--teal)'   },
   { icon:HeartPulse,grad:'linear-gradient(135deg,#8b5cf6,#ec4899)', tag:'Personalized', title:'Complete Care Plans',      desc:'Beyond diagnosis — get detailed medications, tailored diet charts, clinical precautions, and personalized recovery workouts for each condition.',          stats:['Medications','Diet plans','Workouts'],     color:'var(--purple)' },
   { icon:Shield,    grad:'linear-gradient(135deg,#10b981,#00d4ff)', tag:'Safety First', title:'Emergency Detection',       desc:'Multi-layer emergency screening detects critical symptoms in real time — chest pain, breathlessness, stroke signs — with immediate 108 routing.',       stats:['Real-time scan','108 routing','Zero lag'],  color:'var(--green)'  },
-  { icon:MessageCircle, grad:'linear-gradient(135deg,#f59e0b,#ef4444)', tag:'AI Assistant', title:'MediBot Health Chat',       desc:'Gemini AI health chatbot with context-aware medical guidance, prescription upload, and persistent chat history.',  stats:['Gemini AI','Chat history','24/7 access'],    color:'var(--orange)' },
+  { icon:MessageCircle, grad:'linear-gradient(135deg,#f59e0b,#ef4444)', tag:'AI Assistant', title:'MediBot Health Chat',       desc:'Gemini AI health chatbot with context-aware medical guidance, clinical history matching, and persistent chat history.',  stats:['Gemini AI','Chat history','24/7 access'],    color:'var(--orange)' },
 ];
 
 const statsRow = [
@@ -30,11 +30,7 @@ const steps = [
   { n:'03', title:'Get Care Plan',   desc:'Receive top-3 diagnoses with confidence scores, medications, diet recommendations, and recovery plan.', color:'var(--green)' },
 ];
 
-const testimonials = [
-  { name:'Dr. Priya Sharma',   role:'MBBS, General Physician', text:'The symptom prediction accuracy is impressive. I recommend it to patients for a quick preliminary assessment before consultation.', stars:5, avatar:'PS' },
-  { name:'Rahul Mehta',        role:'Engineering Student',      text:'Used it when I had fever and body pain at midnight. Got the exact diagnosis within seconds. Life-saving tool!',                    stars:5, avatar:'RM' },
-  { name:'Ananya Krishnamurthy',role:'Healthcare Researcher',   text:'The AI chatbot makes health information easy to access. Clear answers and chat history help patients stay informed between visits.', stars:5, avatar:'AK' },
-];
+
 
 export default function Home() {
   return (
@@ -47,12 +43,6 @@ export default function Home() {
         <div style={{ position:'relative', zIndex:1, width:'100%', display:'grid', gridTemplateColumns:'1fr auto', gap:'4rem', alignItems:'center' }}>
           {/* Left: copy */}
           <div style={{ maxWidth:700 }}>
-            <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ duration:.4 }}>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 16px 5px 6px', borderRadius:99, background:'rgba(0,212,255,.07)', border:'1px solid rgba(0,212,255,.18)', marginBottom:'2rem' }}>
-                <span style={{ background:'linear-gradient(135deg,var(--teal),var(--purple))', borderRadius:99, padding:'3px 11px', fontSize:'.63rem', fontWeight:800, color:'#03070e', textTransform:'uppercase', letterSpacing:'.1em' }}>New</span>
-                <span style={{ fontSize:'.8rem', color:'var(--t2)' }}>MERN · Python ML · Gemini AI · Production-Grade</span>
-              </div>
-            </motion.div>
 
             <motion.h1 className="h1" initial={{ opacity:0, y:28 }} animate={{ opacity:1, y:0 }} transition={{ duration:.55, delay:.08 }} style={{ marginBottom:'1.5rem' }}>
               Your AI-Powered<br/><span className="grad">Health Guardian</span>
@@ -67,11 +57,7 @@ export default function Home() {
               <Link to="/chat"    className="btn btn-outline btn-lg"><Sparkles size={18}/>Talk to MediBot</Link>
             </motion.div>
 
-            <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:.4 }} style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
-              {['React 19 + Vite','Express.js','MongoDB','Python Flask','Scikit-learn SVC','Gemini AI','JWT Auth'].map(t => (
-                <span key={t} style={{ padding:'4px 13px', borderRadius:99, background:'rgba(255,255,255,.035)', border:'1px solid var(--border)', fontSize:'.7rem', color:'var(--t3)' }}>{t}</span>
-              ))}
-            </motion.div>
+
           </div>
 
           {/* Right: floating diagnosis card */}
@@ -185,30 +171,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────── */}
-      <section style={{ padding:'2rem 0 6rem' }}>
-        <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} style={{ textAlign:'center', marginBottom:'3.5rem' }}>
-          <span className="badge badge-orange" style={{ marginBottom:16, display:'inline-flex' }}><Star size={10}/>Trusted By</span>
-          <h2 className="h2">What users <span className="grad-warm">are saying</span></h2>
-        </motion.div>
-        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:'1.25rem' }}>
-          {testimonials.map(({ name, role, text, stars, avatar }) => (
-            <motion.div key={name} variants={fadeUp} className="glass glass-hover" style={{ padding:'2rem' }}>
-              <div style={{ display:'flex', gap:3, marginBottom:'1.25rem' }}>
-                {Array(stars).fill(0).map((_,i) => <Star key={i} size={14} style={{ color:'var(--orange)', fill:'var(--orange)' }}/>)}
-              </div>
-              <p style={{ color:'var(--t2)', fontSize:'.88rem', lineHeight:1.85, marginBottom:'1.5rem', fontStyle:'italic' }}>"{text}"</p>
-              <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                <div style={{ width:40, height:40, borderRadius:'50%', background:'linear-gradient(135deg,var(--teal),var(--purple))', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:800, fontSize:'.75rem', color:'#03070e', flexShrink:0 }}>{avatar}</div>
-                <div>
-                  <div style={{ fontWeight:600, fontSize:'.88rem' }}>{name}</div>
-                  <div style={{ fontSize:'.73rem', color:'var(--t3)' }}>{role}</div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
+
 
       {/* ── CTA ──────────────────────────────────────────────── */}
       <section style={{ padding:'2rem 0 4rem' }}>
@@ -230,7 +193,7 @@ export default function Home() {
 
       {/* ── FOOTER ───────────────────────────────────────────── */}
       <footer style={{ borderTop:'1px solid var(--border)', padding:'3rem 0 2rem', marginTop:'2rem' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:'3rem', marginBottom:'2.5rem' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'3rem', marginBottom:'2.5rem' }}>
           <div>
             <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:'1rem' }}>
               <div style={{ width:36, height:36, borderRadius:11, background:'linear-gradient(135deg,var(--teal),var(--purple))', display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -247,12 +210,6 @@ export default function Home() {
             <div style={{ fontWeight:700, fontSize:'.82rem', color:'var(--t2)', textTransform:'uppercase', letterSpacing:'.08em', marginBottom:'1rem' }}>Platform</div>
             {['AI Diagnosis','MediBot Chat','Dashboard','Sign Up'].map(l => (
               <div key={l} style={{ marginBottom:8 }}><Link to={l==='Sign Up'?'/auth':l==='AI Diagnosis'?'/predict':l==='MediBot Chat'?'/chat':'/dashboard'} style={{ color:'var(--t3)', fontSize:'.85rem', transition:'var(--t)' }} onMouseEnter={e=>e.target.style.color='var(--teal)'} onMouseLeave={e=>e.target.style.color='var(--t3)'}>{l}</Link></div>
-            ))}
-          </div>
-          <div>
-            <div style={{ fontWeight:700, fontSize:'.82rem', color:'var(--t2)', textTransform:'uppercase', letterSpacing:'.08em', marginBottom:'1rem' }}>Tech Stack</div>
-            {['React 19 + Vite','Express.js + MongoDB','Python Flask','Scikit-learn SVC','Gemini AI'].map(l => (
-              <div key={l} style={{ marginBottom:8, color:'var(--t3)', fontSize:'.83rem' }}>{l}</div>
             ))}
           </div>
         </div>

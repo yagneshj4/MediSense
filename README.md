@@ -15,7 +15,7 @@
 
 ## 📖 Project Overview
 
-**Medi-Assist** is an enterprise-grade healthcare assistant platform designed to bridge the gap between AI-driven medical analysis and everyday healthcare accessibility. The system leverages a **three-service microservices architecture** that handles disease prediction via a custom-trained **Support Vector Classifier (SVC)**, integrates a multilingual conversational healthcare agent using **Google Gemini 2.5 Flash**, and provides secure medical record (prescription) storage backed by **Cloudinary**.
+**Medi-Assist** is an enterprise-grade healthcare assistant platform designed to bridge the gap between AI-driven medical analysis and everyday healthcare accessibility. The system leverages a **three-service microservices architecture** that handles disease prediction via a custom-trained **Support Vector Classifier (SVC)**, integrates a multilingual conversational healthcare agent using **Google Gemini 2.5 Flash**, and provides a secure **Personal Health Records system (Medical Records Vault)** backed by **Cloudinary**.
 
 Built for scale, the project integrates advanced security controls (Helmet CSP, NoSQL query sanitization, magic bytes verification), detailed Winston/Morgan logging pipelines, Dockerization for one-command startup, and GitHub Actions CI/CD workflows.
 
@@ -27,7 +27,7 @@ Built for scale, the project integrates advanced security controls (Helmet CSP, 
 - 🤖 **MediBot Chatbot**: Context-aware Google Gemini 2.5 Flash chatbot supporting multilingual interactions (English, Hindi, Bengali) with persistent chat history.
 - 📄 **AI-Generated PDF Reports**: PDFKit-compiled clinical PDF reports generated on-demand with clinical summary, severity, specialist recommendations, diets, precautions, and warnings.
 - 🚨 **Emergency Detection**: Scans inputs for critical signs (chest pain, stroke indicators) and overrides chatbot/prediction calls to deliver immediate emergency instructions.
-- 📁 **Prescription Cloud Storage**: Securely uploads and deletes files (PDF, JPEG, PNG, WEBP) directly to Cloudinary via memory storage streams (wiping local filesystem dependency).
+- 📁 **Personal Health Records (Medical Records Vault)**: Developed a secure Personal Health Records system that allows users to manage prescriptions, laboratory reports, medical images, and healthcare documents through Cloudinary-backed encrypted storage with role-based access control.
 - 🔐 **Secure File Verification**: Inspects uploaded file buffers dynamically via binary magic bytes (`file-type`) to reject extension spoofing.
 - 🛡️ **Advanced API Security**: Implements `express-rate-limit` (auth, chats, predictions), Helmet (CSP, Clickjacking mitigation), and `express-mongo-sanitize` to defend against NoSQL injections.
 - 📊 **Admin Analytics Dashboard**: Consolidated analytical metrics detailing user growth, prediction distributions, prescription stats, and daily active users.
