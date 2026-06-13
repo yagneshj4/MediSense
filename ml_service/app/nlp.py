@@ -58,19 +58,6 @@ symptom_aliases = {
     'baar baar peshab': 'polyuria', 'peshab mein jalan': 'burning_micturition',
     'gala dard': 'throat_irritation', 'gardan akad': 'stiff_neck',
     'paani ki kami': 'dehydration', 'badan dard': 'muscle_pain',
-    # ── Bengali aliases ────────────────────────────────────────────────────────
-    'jor': 'high_fever', 'jwar': 'high_fever', 'mathay byatha': 'headache',
-    'bomi': 'vomiting', 'bomi bomi bhab': 'nausea', 'kashi': 'cough',
-    'naak diya jol': 'runny_nose', 'thakthakia': 'fatigue', 'durbolota': 'fatigue',
-    'chulkani': 'itching', 'chama phola': 'skin_rash', 'paitshya': 'diarrhoea',
-    'pater byatha': 'stomach_pain', 'buker byatha': 'chest_pain',
-    'shwas koshto': 'breathlessness', 'ghama': 'sweating', 'kaapa': 'shivering',
-    'mathaghoranো': 'dizziness', 'kashtho': 'constipation',
-    'khide nei': 'loss_of_appetite', 'ojon koma': 'weight_loss',
-    'holud chama': 'yellowish_skin', 'gantu peshab': 'dark_urine',
-    'baar baar peshab': 'polyuria', 'peshabe jwala': 'burning_micturition',
-    'gola byatha': 'throat_irritation', 'gharer akorno': 'stiff_neck',
-    'pani shonya': 'dehydration', 'sharir byatha': 'muscle_pain',
 }
 
 

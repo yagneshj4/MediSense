@@ -29,16 +29,16 @@ const features = [
   },
   {
     icon: Languages, grad:'linear-gradient(135deg,#f59e0b,#ef4444)',
-    tag:'Multilingual', title:'MediBot in 3 Languages',
-    desc:'Gemini-powered health chatbot responds fluently in English, Hindi, and Bengali with context-aware medical guidance, prescription upload, and chat history.',
-    stats:['English', 'Hindi', 'Bengali'],
+    tag:'Multilingual', title:'MediBot in 2 Languages',
+    desc:'Gemini-powered health chatbot responds fluently in English and Hindi with context-aware medical guidance, prescription upload, and chat history.',
+    stats:['English', 'Hindi', 'Chat history'],
   },
 ];
 
 const stats = [
   { n:'41+', label:'Diseases Covered', icon: FlaskConical, color:'var(--teal)'   },
   { n:'132', label:'Symptom Signals',  icon: Activity,     color:'var(--purple)' },
-  { n:'3',   label:'Languages',        icon: Globe,        color:'var(--green)'  },
+  { n:'2',   label:'Languages',        icon: Globe,        color:'var(--green)'  },
   { n:'~99%',label:'Model Accuracy',   icon: Zap,          color:'var(--orange)' },
 ];
 

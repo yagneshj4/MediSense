@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const LANGUAGE_NAMES = { en: "English", hi: "Hindi", bn: "Bengali" };
+const LANGUAGE_NAMES = { en: "English", hi: "Hindi" };
 const DEFAULT_MODEL = "gemini-2.5-flash-lite";
 
 function buildSystemPrompt(lang, lastDisease, context) {

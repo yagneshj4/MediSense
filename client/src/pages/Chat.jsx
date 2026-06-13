@@ -9,19 +9,29 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const LANGS = [
-  { code:'en', flag:'🇬🇧', label:'English'  },
-  { code:'hi', flag:'🇮🇳', label:'Hindi'    },
-  { code:'bn', flag:'🇧🇩', label:'Bengali'  },
+  { code:'en', flag:'🇬🇧', label:'English' },
+  { code:'hi', flag:'🇮🇳', label:'Hindi'   },
 ];
 
-const PROMPTS = [
-  'What are the symptoms of diabetes?',
-  'How to manage high blood pressure?',
-  'Best diet for fever recovery?',
-  'When is chest pain serious?',
-  'What is dengue fever?',
-  'How to reduce headache naturally?',
-];
+const PROMPTS_BY_LANG = {
+  en: [
+    'What are the symptoms of diabetes?',
+    'How to manage high blood pressure?',
+    'Best diet for fever recovery?',
+    'When is chest pain serious?',
+    'What is dengue fever?',
+    'How to reduce headache naturally?',
+  ],
+  hi: [
+    'डायबिटीज के लक्षण क्या हैं?',
+    'हाई ब्लड प्रेशर को कैसे नियंत्रित करें?',
+    'बुखार में क्या खाएं?',
+    'सीने में दर्द कब खतरनाक होता है?',
+    'डेंगू बुखार क्या है?',
+    'सिरदर्द को प्राकृतिक तरीके से कैसे कम करें?',
+  ],
+};
+
 
 function Bubble({ msg }) {
   const isBot = msg.role === 'bot';
@@ -188,7 +198,7 @@ export default function Chat() {
       {/* ── Quick prompts (only when fresh) ── */}
       {msgs.length <= 1 && (
         <div style={{ display:'flex', flexWrap:'wrap', gap:7, marginBottom:12, flexShrink:0 }}>
-          {PROMPTS.map(p => (
+          {(PROMPTS_BY_LANG[lang] || PROMPTS_BY_LANG.en).map(p => (
             <button key={p} onClick={() => send(p)} style={{ padding:'5px 13px', borderRadius:99, background:'rgba(255,255,255,.04)', border:'1px solid var(--border)', color:'var(--t2)', fontSize:'.76rem', cursor:'pointer', transition:'var(--t)' }}
               onMouseEnter={e => { e.currentTarget.style.background='var(--teal-dim)'; e.currentTarget.style.color='var(--teal)'; e.currentTarget.style.borderColor='rgba(0,212,255,.3)'; }}
               onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,.04)'; e.currentTarget.style.color='var(--t2)'; e.currentTarget.style.borderColor='var(--border)'; }}

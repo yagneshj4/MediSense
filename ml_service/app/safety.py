@@ -43,13 +43,6 @@ def emergency_message(lang: str = "en") -> str:
             "Do not wait for an AI response."
         )
 
-    if lang == "bn":
-        return (
-            "Emergency warning: Your message may describe a serious medical emergency. "
-            "Please call 108 immediately or go to the nearest emergency department. "
-            "Do not wait for an AI response."
-        )
-
     return (
         "Emergency warning: Your message may describe a serious medical emergency. "
         "Please call 108 immediately or go to the nearest emergency department. "
