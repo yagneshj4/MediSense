@@ -94,7 +94,7 @@ export default function Sidebar() {
       {/* ── User ── */}
       <div style={{ padding:'10px 8px', borderTop:'1px solid var(--border)' }}>
         {isAuth ? (
-          <div style={{ display:'flex', alignItems:'center', gap:9, padding:'8px 10px', borderRadius:var_r_md(), background:'rgba(255,255,255,.03)', border:'1px solid var(--border)' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:9, padding:'8px 10px', borderRadius:'var(--r-md)', background:'rgba(255,255,255,.03)', border:'1px solid var(--border)' }}>
             <div style={{ width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,var(--teal),var(--purple))', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.75rem', fontWeight:700, color:'#060b17' }}>
               {user?.name?.[0]?.toUpperCase() || 'U'}
             </div>
