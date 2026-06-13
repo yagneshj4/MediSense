@@ -7,6 +7,7 @@ const helmet   = require("helmet");
 const morgan   = require("morgan");
 const mongoose = require("mongoose");
 const path     = require("path");
+const mongoSanitize = require("express-mongo-sanitize");
 const logger   = require("./utils/logger");
 
 const authRoutes         = require("./routes/auth");
@@ -14,27 +15,56 @@ const predictRoutes      = require("./routes/predict");
 const chatRoutes         = require("./routes/chat");
 const prescriptionRoutes = require("./routes/prescriptions");
 const predictionRoutes   = require("./routes/predictions");
+const adminRoutes        = require("./routes/admin");
 const errorHandler       = require("./middleware/errorHandler");
 
 const app = express();
 
 // ── Security & Logging ───────────────────────────────────────────────
-app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(morgan("dev"));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "res.cloudinary.com"],
+        connectSrc: ["'self'", "https://generativelanguage.googleapis.com"],
+      },
+    },
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    xContentTypeOptions: true, // Prevents MIME sniffing
+    xFrameOptions: { action: "deny" }, // Prevents clickjacking
+  })
+);
+
+// Route Morgan request logs through Winston structured JSON format logger
+app.use(
+  morgan(
+    ":remote-addr :method :url :status :res[content-length] - :response-time ms",
+    {
+      stream: {
+        write: (message) => logger.info(message.trim()),
+      },
+    }
+  )
+);
 
 // ── CORS ─────────────────────────────────────────────────────────────
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 app.use(cors({
-  origin: [CLIENT_URL, "http://localhost:5173", "http://localhost:3000"],
+  origin: [CLIENT_URL, "http://localhost:5173", "http://localhost:3000", "http://localhost:5000"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// ── Body Parser ───────────────────────────────────────────────────────
+// ── Body Parser & Sanitization ────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-
+app.use(mongoSanitize()); // Prevent NoSQL injection attacks
 
 // ── API Routes ────────────────────────────────────────────────────────
 app.use("/api/auth",          authRoutes);
@@ -42,10 +72,37 @@ app.use("/api/predict",       predictRoutes);
 app.use("/api/chat",          chatRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/predictions",   predictionRoutes);
+app.use("/api/admin",         adminRoutes);
 
-// ── Health Check ──────────────────────────────────────────────────────
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", service: "medi-assist-api", time: new Date().toISOString() });
+// ── Health Check (Dependency-Aware) ───────────────────────────────────
+app.get("/api/health", async (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+  
+  let mlStatus = "offline";
+  const ML_URL = process.env.ML_SERVICE_URL || "http://localhost:8000";
+  try {
+    const axios = require("axios");
+    const mlRes = await axios.get(`${ML_URL}/ml/health`, { timeout: 2000 });
+    if (mlRes.data?.status === "ok") {
+      mlStatus = "connected";
+    }
+  } catch (err) {
+    mlStatus = "offline";
+  }
+
+  const isHealthy = dbStatus === "connected" && mlStatus === "connected";
+
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? "ok" : "degraded",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    services: {
+      api: "online",
+      database: dbStatus,
+      ml_service: mlStatus
+    }
+  });
 });
 
 // ── 404 handler ───────────────────────────────────────────────────────

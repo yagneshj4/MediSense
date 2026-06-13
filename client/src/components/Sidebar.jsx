@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity, Brain, MessageSquare, LayoutDashboard,
-  LogOut, Stethoscope, Menu, X, User,
+  LogOut, Stethoscope, Menu, X, User, Shield,
 } from 'lucide-react';
 
 const nav = [
@@ -18,6 +18,11 @@ export default function Navbar() {
   const { user, logout, isAuth } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const activeNav = [...nav];
+  if (isAuth && user?.role === 'admin') {
+    activeNav.push({ to: '/admin', icon: Shield, label: 'Admin' });
+  }
 
   return (
     <>
@@ -56,7 +61,7 @@ export default function Navbar() {
 
           {/* ── Desktop Nav ── */}
           <nav style={{ display:'flex', alignItems:'center', gap:3, flex:1 }} className="desktop-nav">
-            {nav.map(({ to, icon: Icon, label }) => (
+            {activeNav.map(({ to, icon: Icon, label }) => (
               <NavLink key={to} to={to} end={to === '/'}
                 style={({ isActive }) => ({
                   display:'flex', alignItems:'center', gap:6,
@@ -178,7 +183,7 @@ export default function Navbar() {
               style={{ overflow:'hidden', borderTop:'1px solid var(--border)' }}
             >
               <nav style={{ padding:'10px 16px 14px', display:'flex', flexDirection:'column', gap:3 }}>
-                {nav.map(({ to, icon: Icon, label }) => (
+                {activeNav.map(({ to, icon: Icon, label }) => (
                   <NavLink key={to} to={to} end={to === '/'}
                     onClick={() => setMobileOpen(false)}
                     style={({ isActive }) => ({

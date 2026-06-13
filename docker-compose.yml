@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mediassist_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  ml_service:
+    build: ./ml_service
+    container_name: mediassist_ml
+    ports:
+      - "8000:8000"
+    environment:
+      - ML_PORT=8000
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    container_name: mediassist_api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+      - ml_service
+    environment:
+      - PORT=3001
+      - MONGO_URI=mongodb://mongodb:27017/mediassist
+      - JWT_SECRET=dev_secret_key_change_in_production
+      - ML_SERVICE_URL=http://ml_service:8000
+      - CLIENT_URL=http://localhost:5000
+      - CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+      - CLOUDINARY_API_KEY=your_cloudinary_api_key
+      - CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+      - ADMIN_SECRET_KEY=admin_secret_registration_key
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      args:
+        - VITE_API_URL=http://localhost:3001/api
+    container_name: mediassist_client
+    ports:
+      - "5000:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  mongo_data:

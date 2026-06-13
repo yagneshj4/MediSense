@@ -8,6 +8,7 @@ import Auth      from './pages/Auth';
 import Predict   from './pages/Predict';
 import Chat      from './pages/Chat';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 
 
@@ -31,6 +32,7 @@ export default function App() {
               <Route path="/predict"  element={<PageWrapper><Predict /></PageWrapper>}   />
               <Route path="/chat"     element={<PageWrapper><Chat /></PageWrapper>}      />
               <Route path="/dashboard"element={<PageWrapper><Dashboard /></PageWrapper>} />
+              <Route path="/admin"    element={<PageWrapper><AdminDashboard /></PageWrapper>} />
               <Route path="*"         element={<PageWrapper><Home /></PageWrapper>}      />
             </Routes>
           </main>
